@@ -4,11 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>[B2B] 유통사 리드 관리</title>
-
-<!-- 카카오 지도 SDK (GitHub Pages에서는 정상 로드됨) -->
 <script type="text/javascript"
   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=88402647bd084816fc02a3e0d5a63f45&libraries=services"></script>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
 :root{
@@ -47,10 +44,8 @@ html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;
 .kpi-label{font-size:10px;color:var(--text3);letter-spacing:.3px}
 .kpi-value{font-size:20px;font-weight:700;letter-spacing:-.5px}
 .kpi-sep{width:1px;height:28px;background:var(--border);align-self:center;flex-shrink:0}
-/* 진행 바 */
-.prog-bar{height:2px;background:var(--bg3);flex-shrink:0;position:relative}
+.prog-bar{height:2px;background:var(--bg3);flex-shrink:0}
 .prog-fill{height:100%;background:var(--accent);transition:width .3s;width:0}
-/* 필터 */
 .filter-bar{padding:8px 20px;border-bottom:1px solid var(--border);
   display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap}
 .fi{background:var(--bg3);border:1px solid var(--border);color:var(--text);
@@ -58,7 +53,6 @@ html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;
 .fi:focus{border-color:var(--accent)}
 .fi-search{flex:1;min-width:150px;max-width:260px}
 .fi-count{font-size:11px;color:var(--text3);margin-left:auto}
-/* 테이블 */
 .tw{flex:1;overflow-y:auto}
 .tw::-webkit-scrollbar{width:5px}
 .tw::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
@@ -72,7 +66,6 @@ td{padding:9px 12px;border-bottom:1px solid rgba(48,54,61,.4);font-size:12px;
   vertical-align:middle;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 tbody tr{cursor:pointer;transition:background .1s}
 tbody tr:hover{background:var(--bg2)}
-/* 배지 */
 .b{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
 .bA{background:rgba(63,185,80,.15);color:var(--green)}
 .bB{background:rgba(210,153,34,.15);color:var(--amber)}
@@ -87,7 +80,6 @@ tbody tr:hover{background:var(--bg2)}
 .b미진행{background:rgba(110,118,129,.08);color:var(--text3)}
 .bOVER{background:rgba(248,81,73,.15);color:var(--red)}
 .bTODAY{background:rgba(210,153,34,.15);color:var(--amber)}
-/* 오늘 */
 .cards{flex:1;overflow-y:auto;padding:12px 20px;display:flex;flex-direction:column;gap:6px}
 .grp-title{font-size:11px;font-weight:600;color:var(--text3);padding:6px 0 4px;
   border-bottom:1px solid var(--border);margin-bottom:6px;
@@ -101,11 +93,6 @@ tbody tr:hover{background:var(--bg2)}
 .cbs{display:flex;gap:3px;flex-wrap:wrap}
 .ca{font-size:11px;color:var(--text2);text-align:right}
 .cd{font-size:10px;color:var(--text3);margin-bottom:2px}
-.ct{display:flex;gap:5px;justify-content:flex-end;margin-top:6px}
-.cbtn{padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);
-  background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit}
-.cbtn:hover{color:var(--text);border-color:var(--accent)}
-/* 지도 */
 .map-wrap{flex:1;display:flex;overflow:hidden}
 #kmap{flex:1;min-height:0}
 .map-side{width:280px;flex-shrink:0;background:var(--bg2);
@@ -121,14 +108,12 @@ tbody tr:hover{background:var(--bg2)}
 .mi.on{background:rgba(31,111,235,.1);border-left:2px solid var(--accent)}
 .mi-n{font-size:12px;font-weight:500;margin-bottom:2px}
 .mi-m{font-size:10px;color:var(--text3);line-height:1.4}
-/* 카카오 커스텀 마커 */
 .km{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;font-size:11px;font-weight:700;color:#fff;
   border:2px solid rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(0,0,0,.5);
   cursor:pointer;transform:translate(-50%,-50%)}
-.km:hover{transform:translate(-50%,-50%) scale(1.2)}
+.km:hover{transform:translate(-50%,-50%) scale(1.15)}
 .kmA{background:#3FB950}.kmB{background:#D29922}.kmC{background:#6E7681}
-/* 인포창 */
 .kinfo{background:#1e2631;border-radius:10px;padding:11px 13px;min-width:190px;
   font-family:'Pretendard',sans-serif;position:relative;
   border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 24px rgba(0,0,0,.5)}
@@ -140,7 +125,6 @@ tbody tr:hover{background:var(--bg2)}
 .kinfo-close{position:absolute;top:6px;right:8px;background:none;border:none;
   color:#6E7681;font-size:14px;cursor:pointer;padding:2px}
 .kinfo-close:hover{color:#E6EDF3}
-/* 패널 */
 .panel{position:fixed;right:0;top:52px;bottom:0;width:360px;
   background:var(--bg2);border-left:1px solid var(--border);
   transform:translateX(100%);transition:transform .22s ease;
@@ -164,22 +148,11 @@ tbody tr:hover{background:var(--bg2)}
 .bc{background:var(--bg3);border-radius:5px;padding:9px 11px;margin-bottom:6px}
 .bch{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .bct{font-size:11px;font-weight:600}
-.bcm{font-size:10px;color:var(--text3);line-height:1.5;margin-top:3px}
-.di{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);
-  border-radius:5px;padding:7px 9px;font-family:inherit;font-size:11px;outline:none;resize:vertical}
-textarea.di{min-height:60px}
-.di:focus{border-color:var(--accent)}
-/* 로딩 */
 .ld{display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:10px}
 .sp{width:32px;height:32px;border:2.5px solid var(--bg3);
   border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .lt{font-size:12px;color:var(--text3)}
-/* 인증 */
-.auth-screen{display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:16px}
-.auth-btn{padding:12px 24px;background:var(--accent);color:#fff;border:none;
-  border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
-.auth-btn:hover{opacity:.9}
 @media(max-width:700px){
   .map-side{display:none}.panel{width:100%}
   td:nth-child(4),th:nth-child(4),td:nth-child(5),th:nth-child(5){display:none}
@@ -187,7 +160,7 @@ textarea.di{min-height:60px}
 </style>
 </head>
 <body>
-<div class="app" id="app" style="display:none">
+<div class="app">
 
 <header class="header">
   <div class="header-logo">🏭 B2B 유통사 리드 관리</div>
@@ -249,11 +222,12 @@ textarea.di{min-height:60px}
       </select>
       <select class="fi" id="f-biz" onchange="renderList()">
         <option value="">중개 전체</option>
-        <option>미진행</option><option>중개중</option><option>거래성사</option><option>이탈</option>
+        <option>미진행</option><option>중개중</option>
+        <option>거래성사</option><option>이탈</option>
       </select>
       <span class="fi-count" id="c-list"></span>
     </div>
-    <div class="tw" id="tw" onscroll="vsScroll()">
+    <div class="tw" id="tw" onscroll="vsRender()">
       <table>
         <thead><tr>
           <th onclick="srt('name')">유통사명</th><th onclick="srt('icp')">ICP</th>
@@ -289,15 +263,6 @@ textarea.di{min-height:60px}
 </div>
 </div>
 
-<!-- 인증 화면 -->
-<div id="auth-screen" style="height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:var(--bg)">
-  <div style="font-size:32px">🏭</div>
-  <div style="font-size:18px;font-weight:600;color:var(--text)">B2B 유통사 리드 관리</div>
-  <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Google 계정으로 로그인하여 시트 데이터를 불러옵니다</div>
-  <button class="auth-btn" onclick="signIn()">Google 로그인</button>
-  <div style="font-size:11px;color:var(--text3)" id="auth-msg"></div>
-</div>
-
 <!-- 패널 -->
 <div class="panel" id="panel">
   <div class="ph">
@@ -309,11 +274,11 @@ textarea.di{min-height:60px}
 
 <script>
 // ── 설정 ─────────────────────────────────────────────────────
+// ※ Google Sheets를 "링크가 있는 모든 사용자 → 뷰어" 공개 설정 필요
 var SHEET_ID   = '1IMfCKDXB-Le-m10TaDr-a6akRfAhAnoTes53_MTu9JY';
 var SHEET_NAME = '유통사 마스터';
-var CLIENT_ID  = '601385534693-7j6iadeaq3ular5r2aq79c2q5ml099qq.apps.googleusercontent.com'; // ← Google Cloud Console에서 발급
-var SCOPES     = 'https://www.googleapis.com/auth/spreadsheets.readonly';
-var KAKAO_KEY  = '88402647bd084816fc02a3e0d5a63f45';
+var API_KEY    = 'AIzaSyDJMPPD7lWjk-E_LrmHJAbjnMV6ese-2bo'; // Google Cloud Console → API 키
+// ↑ API 키만 있으면 로그인 불필요 (공개 시트 읽기 전용)
 
 // ── 상태 ─────────────────────────────────────────────────────
 var S=[],TD=[],fList=[];
@@ -322,128 +287,118 @@ var geoC={};
 var mapInited=false,currentView='today';
 var sortKey='elapsed',sortDir=-1;
 var ROW_H=42,BUFFER=8;
-var _dbt=null,_tokenClient=null;
+var _dbt=null;
 
 try{ geoC=JSON.parse(localStorage.getItem('crmGeoKakao')||'{}'); }catch(e){}
 
-// ── Google Identity Services 인증 ─────────────────────────────
-function initGIS() {
-  if (typeof google === 'undefined' || !google.accounts) {
-    setTimeout(initGIS, 200); return;
-  }
-  _tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope    : SCOPES,
-    callback : function(resp) {
-      if (resp.error) { document.getElementById('auth-msg').textContent='로그인 실패: '+resp.error; return; }
-      localStorage.setItem('gis_token', resp.access_token);
-      showApp();
-      loadAll();
-    }
-  });
-  // 기존 토큰 있으면 바로 시작
-  var tok = localStorage.getItem('gis_token');
-  if (tok) { showApp(); loadAll(); }
-}
+window.onload = function(){ loadAll(); };
 
-function signIn() {
-  document.getElementById('auth-msg').textContent='로그인 중...';
-  _tokenClient.requestAccessToken();
-}
-
-function showApp() {
-  document.getElementById('auth-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
-}
-
-// ── 데이터 로드 (Sheets API 직접 호출) ───────────────────────
+// ── 데이터 로드 (Sheets API 공개 읽기 — 로그인 불필요) ───────
 function loadAll() {
-  var tok = localStorage.getItem('gis_token');
-  if (!tok) return;
   document.getElementById('hst').textContent='로딩 중...';
   setProg(10);
 
-  var range = encodeURIComponent(SHEET_NAME+'!A6:AC3000');
-  var url   = 'https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
-              '/values/'+range+'?valueRenderOption=FORMATTED_VALUE';
+  // 공개 시트 + API 키 조합으로 인증 없이 읽기 가능
+  var range = encodeURIComponent(SHEET_NAME+'!A6:AC3500');
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
+            '/values/'+range+'?key='+API_KEY+'&valueRenderOption=FORMATTED_VALUE';
 
-  fetch(url, {headers:{'Authorization':'Bearer '+tok}})
+  fetch(url)
     .then(function(r){
-      if (r.status===401) { localStorage.removeItem('gis_token'); signIn(); return null; }
+      if(!r.ok) throw new Error('HTTP '+r.status+': 시트 접근 실패. 공개 설정 또는 API 키를 확인하세요.');
       return r.json();
     })
-    .then(function(data) {
-      if (!data) return;
-      setProg(60);
-      S = (data.values||[]).map(function(r,i){
-        var name = (r[0]||'').trim();
-        if (!name) return null;
-        var elapsed = parseInt(r[8])||0;
-        var nextAction = r[9]||'';
-        return {
-          id:i, name:name,
-          phone:(r[1]||'').trim(), address:(r[2]||'').trim(),
-          items:(r[3]||'').trim(), erp:(r[4]||'').trim(),
-          icp:(r[5]||'').trim(), source:(r[6]||'').trim(),
-          lastContact:r[7]||'', elapsed:elapsed,
-          nextAction:nextAction, nextAct:(r[10]||'').trim(),
-          mtgCount:parseInt(r[11])||0, mtg1:r[12]||'',
-          mtgMemo:(r[17]||'').trim(),
-          saasSt:(r[18]||'미진행').trim(), saasDate:r[19]||'', saasMemo:(r[20]||'').trim(),
-          matchSt:(r[21]||'미진행').trim(), matchCnt:(r[22]||'').trim(),
-          matchDate:r[23]||'', matchMemo:(r[24]||'').trim(),
-          bizSt:(r[25]||'미진행').trim(), bizPartner:(r[26]||'').trim(),
-          bizDate:r[27]||'', bizMemo:(r[28]||'').trim(),
-        };
-      }).filter(Boolean);
-
-      // 오늘 할 일 계산
-      var today=new Date(); today.setHours(0,0,0,0);
-      var DONE=['계약완료','매칭완료','거래성사','이탈'];
-      TD = S.filter(function(s){
-        if(DONE.includes(s.saasSt)&&DONE.includes(s.matchSt)&&DONE.includes(s.bizSt))return false;
-        if(!s.nextAction)return false;
-        var d=new Date(s.nextAction); d.setHours(0,0,0,0);
-        return d<=today;
-      }).map(function(s){
-        var d=new Date(s.nextAction); d.setHours(0,0,0,0);
-        return Object.assign({},s,{overdue:d<today});
-      });
-
-      setProg(100);
-      updateKPI();
-      renderToday(); renderList();
-      document.getElementById('hst').textContent=
-        '업데이트: '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-
-      if (mapInited) fmap();
+    .then(function(data){
+      setProg(70);
+      parseAndRender(data.values||[]);
     })
-    .catch(function(e){ console.error(e); document.getElementById('hst').textContent='오류 발생'; });
+    .catch(function(e){
+      console.error(e);
+      document.getElementById('hst').textContent='⚠️ '+e.message;
+      setProg(0);
+    });
+}
+
+function parseAndRender(rows) {
+  var today=new Date(); today.setHours(0,0,0,0);
+
+  S = rows.map(function(r,i){
+    var name=(r[0]||'').trim();
+    if(!name) return null;
+    return {
+      id:i, name:name,
+      phone :(r[1]||'').trim(),
+      address:(r[2]||'').trim(),
+      items :(r[3]||'').trim(),
+      erp   :(r[4]||'').trim(),
+      icp   :(r[5]||'').trim(),
+      source:(r[6]||'').trim(),
+      lastContact:r[7]||'',
+      elapsed:parseInt(r[8])||0,
+      nextAction:r[9]||'',
+      nextAct:(r[10]||'').trim(),
+      mtgCount:parseInt(r[11])||0,
+      mtg1:r[12]||'',
+      mtgMemo:(r[17]||'').trim(),
+      saasSt :(r[18]||'미진행').trim(),
+      saasDate:r[19]||'',
+      saasMemo:(r[20]||'').trim(),
+      matchSt:(r[21]||'미진행').trim(),
+      matchCnt:(r[22]||'').trim(),
+      matchDate:r[23]||'',
+      matchMemo:(r[24]||'').trim(),
+      bizSt  :(r[25]||'미진행').trim(),
+      bizPartner:(r[26]||'').trim(),
+      bizDate:r[27]||'',
+      bizMemo:(r[28]||'').trim(),
+    };
+  }).filter(Boolean);
+
+  // 오늘 할 일
+  var DONE=['계약완료','매칭완료','거래성사','이탈'];
+  TD = S.filter(function(s){
+    if(DONE.includes(s.saasSt)&&DONE.includes(s.matchSt)&&DONE.includes(s.bizSt))return false;
+    if(!s.nextAction)return false;
+    var d=new Date(s.nextAction); d.setHours(0,0,0,0);
+    return d<=today;
+  }).map(function(s){
+    var d=new Date(s.nextAction); d.setHours(0,0,0,0);
+    return Object.assign({},s,{overdue:d<today});
+  });
+
+  setProg(100);
+  updateKPI();
+  renderToday();
+  renderList();
+  if(mapInited) fmap();
+  document.getElementById('hst').textContent=
+    '업데이트: '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
 }
 
 // ── 뷰 전환 ─────────────────────────────────────────────────
-function sw(v) {
-  currentView=v;
-  closeP();
+function sw(v){
+  currentView=v; closeP();
   document.querySelectorAll('.view').forEach(function(e){e.classList.remove('active')});
   document.querySelectorAll('.nav-btn').forEach(function(e){e.classList.remove('active')});
   document.getElementById('v-'+v).classList.add('active');
   document.getElementById('n-'+v).classList.add('active');
-  if(v==='map'){if(!mapInited){initKMap();mapInited=true;}else{fmap();}}
+  if(v==='map'){if(!mapInited){initKMap();mapInited=true;}else fmap();}
 }
 
 // ── 오늘 할 일 ───────────────────────────────────────────────
-function renderToday() {
+function renderToday(){
   var q=(document.getElementById('q-today')||{}).value||''; q=q.toLowerCase();
   var list=TD.filter(function(s){return !q||s.name.toLowerCase().includes(q);});
   document.getElementById('c-today').textContent=list.length+'개';
   var el=document.getElementById('cards');
-  if(!list.length){el.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px">오늘 액션 없음 🎉</div>';return;}
-
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px;font-size:13px">오늘 액션 없음 🎉</div>';
+    return;
+  }
   var grps=[
-    {t:'기한 초과',    d:list.filter(function(s){return s.overdue})},
-    {t:'A등급 우선',   d:list.filter(function(s){return !s.overdue&&s.icp==='A등급'})},
-    {t:'오늘 처리',    d:list.filter(function(s){return !s.overdue&&s.icp!=='A등급'})},
+    {t:'기한 초과',  d:list.filter(function(s){return s.overdue})},
+    {t:'A등급 우선', d:list.filter(function(s){return !s.overdue&&s.icp==='A등급'})},
+    {t:'오늘 처리',  d:list.filter(function(s){return !s.overdue&&s.icp!=='A등급'})},
   ].filter(function(g){return g.d.length});
 
   el.innerHTML=grps.map(function(g){
@@ -457,23 +412,19 @@ function renderToday() {
             (s.overdue?'<span class="b bOVER">기한초과</span>':'<span class="b bTODAY">오늘</span>')+
           '</div></div>'+
           '<div class="ca"><div class="cd">'+(s.nextAction||'')+'</div>'+
-          '<div>'+esc(s.nextAct||'')+'</div>'+
-          '<div class="ct">'+
-            '<button class="cbtn" onclick="event.stopPropagation();openP('+s.id+')">상세</button>'+
-          '</div></div>'+
+          '<div>'+esc(s.nextAct||'')+'</div></div>'+
         '</div>';
       }).join('')+'</div>';
   }).join('');
 }
 
 // ── 목록 (가상스크롤) ────────────────────────────────────────
-function renderList() {
+function renderList(){
   var q=(document.getElementById('q-list')||{}).value||''; q=q.toLowerCase();
   var icp=(document.getElementById('f-icp')||{}).value||'';
   var saas=(document.getElementById('f-saas')||{}).value||'';
   var match=(document.getElementById('f-match')||{}).value||'';
   var biz=(document.getElementById('f-biz')||{}).value||'';
-  var today=new Date(); today.setHours(0,0,0,0);
 
   fList=S.filter(function(s){
     if(icp&&s.icp!==icp)return false;
@@ -488,25 +439,28 @@ function renderList() {
 
   fList.sort(function(a,b){
     var av=a[sortKey],bv=b[sortKey];
-    if(typeof av==='number'||typeof bv==='number')return((Number(av)||0)-(Number(bv)||0))*sortDir;
+    if(typeof av==='number'||typeof bv==='number')
+      return((Number(av)||0)-(Number(bv)||0))*sortDir;
     return String(av||'').localeCompare(String(bv||''),'ko')*sortDir;
   });
 
   document.getElementById('c-list').textContent=fList.length.toLocaleString()+'개';
   var tw=document.getElementById('tw');
-  if(tw)tw.scrollTop=0;
+  if(tw) tw.scrollTop=0;
   vsRender();
 }
 
 function srt(k){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1;}renderList();}
 
-function vsRender() {
+function vsRender(){
   var today=new Date(); today.setHours(0,0,0,0);
-  var tw=document.getElementById('tw'), tbody=document.getElementById('tbody');
+  var tw=document.getElementById('tw'),tbody=document.getElementById('tbody');
   if(!tw||!tbody)return;
-  var top=tw.scrollTop, h=tw.clientHeight, n=fList.length;
-  if(!n){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:30px">결과 없음</td></tr>';return;}
-
+  var top=tw.scrollTop,h=tw.clientHeight,n=fList.length;
+  if(!n){
+    tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:30px">결과 없음</td></tr>';
+    return;
+  }
   var s=Math.max(0,Math.floor(top/ROW_H)-BUFFER);
   var e=Math.min(n,Math.ceil((top+h)/ROW_H)+BUFFER);
   var pt=s*ROW_H, pb=(n-e)*ROW_H;
@@ -529,18 +483,15 @@ function vsRender() {
     '<tr style="height:'+pb+'px"><td colspan="9" style="padding:0;border:none"></td></tr>';
 }
 
-function vsScroll(){vsRender();}
-
 // ── 카카오 지도 ──────────────────────────────────────────────
-function initKMap() {
-  var container=document.getElementById('kmap');
-  var options={center:new kakao.maps.LatLng(37.5665,126.9780),level:8};
-  kakaoMap=new kakao.maps.Map(container,options);
+function initKMap(){
+  kakaoMap=new kakao.maps.Map(document.getElementById('kmap'),
+    {center:new kakao.maps.LatLng(37.5665,126.9780),level:8});
   kakao.maps.event.addListener(kakaoMap,'click',function(){closeOl();});
   fmap();
 }
 
-function fmap() {
+function fmap(){
   var q=(document.getElementById('q-map')||{}).value||''; q=q.toLowerCase();
   var icp=(document.getElementById('f-map-icp')||{}).value||'';
   var filtered=S.filter(function(s){
@@ -551,50 +502,48 @@ function fmap() {
   renderML(filtered);
   if(!kakaoMap)return;
 
-  // 마커 초기화
   Object.values(kakaoMk).forEach(function(m){m.setMap(null);});
-  kakaoMk={};
-  closeOl();
+  kakaoMk={}; closeOl();
 
-  // 캐시된 것 즉시 표시
+  // 캐시된 것 즉시 마커 표시
   var uncached=[];
   filtered.forEach(function(s){
-    if(geoC[s.address])addKM(s,geoC[s.address].lat,geoC[s.address].lng);
+    if(geoC[s.address]) addKM(s,geoC[s.address].lat,geoC[s.address].lng);
     else uncached.push(s);
   });
 
-  // 카카오 SDK 지오코딩 (브라우저에서 직접 호출 — 빠름!)
-  if(uncached.length){
-    var geocoder=new kakao.maps.services.Geocoder();
-    var total=uncached.length, done=0;
-    document.getElementById('gst').textContent='변환 0/'+total;
-
-    uncached.forEach(function(s){
-      geocoder.addressSearch(s.address,function(r,status){
-        if(status===kakao.maps.services.Status.OK&&r[0]){
-          var lat=parseFloat(r[0].y), lng=parseFloat(r[0].x);
-          geoC[s.address]={lat:lat,lng:lng};
-          addKM(s,lat,lng);
-        }
-        done++;
-        if(done>=total){
-          document.getElementById('gst').textContent='';
-          try{localStorage.setItem('crmGeoKakao',JSON.stringify(geoC));}catch(e){}
-        } else {
-          document.getElementById('gst').textContent='변환 '+done+'/'+total;
-        }
-      });
-    });
+  // 미캐시 → 카카오 SDK Geocoder로 직접 변환 (빠름!)
+  if(!uncached.length){
+    document.getElementById('gst').textContent='';
+    return;
   }
+  var geocoder=new kakao.maps.services.Geocoder();
+  var total=uncached.length, done=0;
+  document.getElementById('gst').textContent='변환 0/'+total;
+
+  uncached.forEach(function(s){
+    geocoder.addressSearch(s.address, function(result,status){
+      if(status===kakao.maps.services.Status.OK&&result[0]){
+        var lat=parseFloat(result[0].y), lng=parseFloat(result[0].x);
+        geoC[s.address]={lat:lat,lng:lng};
+        addKM(s,lat,lng);
+      }
+      done++;
+      document.getElementById('gst').textContent = done<total ? '변환 '+done+'/'+total : '';
+      if(done>=total){
+        try{localStorage.setItem('crmGeoKakao',JSON.stringify(geoC));}catch(e){}
+      }
+    });
+  });
 }
 
 function addKM(store,lat,lng){
   if(!kakaoMap||kakaoMk[store.id])return;
   var c=(store.icp||'C').replace('등급','');
   var el=document.createElement('div');
-  el.className='km km'+c;
-  el.textContent=c;
-  var m=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(lat,lng),content:el,zIndex:3});
+  el.className='km km'+c; el.textContent=c;
+  var m=new kakao.maps.CustomOverlay({
+    position:new kakao.maps.LatLng(lat,lng),content:el,zIndex:3});
   m.setMap(kakaoMap);
   el.addEventListener('click',function(e){
     e.stopPropagation();
@@ -606,24 +555,39 @@ function addKM(store,lat,lng){
 
 function openOl(store,pos){
   closeOl();
-  var sC=sColor(store.saasSt), mC=mColor(store.matchSt);
-  var c='<div class="kinfo">'+
-    '<button class="kinfo-close" onclick="closeOl()">×</button>'+
-    '<div class="kinfo-name">'+esc(store.name)+'</div>'+
-    '<div class="kinfo-row">📞 '+esc(store.phone||'–')+'</div>'+
-    '<div class="kinfo-row">📍 '+esc(store.address)+'</div>'+
-    (store.items?'<div class="kinfo-row">🥬 '+esc(store.items)+'</div>':'')+
-    '<div class="kinfo-bs">'+
-      '<span style="background:'+sC.bg+';color:'+sC.t+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">'+store.saasSt+'</span>'+
-      '<span style="background:'+mC.bg+';color:'+mC.t+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">'+store.matchSt+'</span>'+
-    '</div></div>';
+  var sC=stColor(store.saasSt), mC=stColor(store.matchSt);
   kakaoOl=new kakao.maps.CustomOverlay({
     position:new kakao.maps.LatLng(pos.getLat()+0.0003,pos.getLng()),
-    content:c,zIndex:10
+    content:'<div class="kinfo">'+
+      '<button class="kinfo-close" onclick="closeOl()">×</button>'+
+      '<div class="kinfo-name">'+esc(store.name)+'</div>'+
+      '<div class="kinfo-row">📞 '+esc(store.phone||'–')+'</div>'+
+      '<div class="kinfo-row">📍 '+esc(store.address)+'</div>'+
+      (store.items?'<div class="kinfo-row">🥬 '+esc(store.items)+'</div>':'')+
+      '<div class="kinfo-bs">'+
+        '<span style="background:'+sC.bg+';color:'+sC.t+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">'+store.saasSt+'</span> '+
+        '<span style="background:'+mC.bg+';color:'+mC.t+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">'+store.matchSt+'</span>'+
+      '</div></div>',
+    zIndex:10
   });
   kakaoOl.setMap(kakaoMap);
 }
 function closeOl(){if(kakaoOl){kakaoOl.setMap(null);kakaoOl=null;}}
+
+function stColor(st){
+  var m={
+    '계약완료':{bg:'rgba(56,139,253,.25)',t:'#7ab8fd'},
+    '제안중'  :{bg:'rgba(163,113,247,.25)',t:'#c3a4f8'},
+    '데모완료':{bg:'rgba(163,113,247,.2)', t:'#c3a4f8'},
+    '검토중'  :{bg:'rgba(56,139,253,.2)',  t:'#7ab8fd'},
+    '매칭완료':{bg:'rgba(63,185,80,.25)',  t:'#7ce89a'},
+    '매칭중'  :{bg:'rgba(63,185,80,.2)',   t:'#7ce89a'},
+    '거래성사':{bg:'rgba(163,113,247,.25)',t:'#c3a4f8'},
+    '이탈'    :{bg:'rgba(248,81,73,.2)',   t:'#fca5a5'},
+    '재활성화':{bg:'rgba(210,153,34,.2)',  t:'#fcd34d'},
+  };
+  return m[st]||{bg:'rgba(110,118,129,.15)',t:'#8B949E'};
+}
 
 function renderML(list){
   document.getElementById('mlist').innerHTML=list.map(function(s){
@@ -640,7 +604,7 @@ function focusMk(id){
   if(c&&kakaoMap){
     var pos=new kakao.maps.LatLng(c.lat,c.lng);
     kakaoMap.setCenter(pos); kakaoMap.setLevel(4);
-    if(st)openOl(st,pos);
+    if(st) openOl(st,pos);
   }
   hilML(id); openP(id);
 }
@@ -649,71 +613,50 @@ function hilML(id){
   var el=document.querySelector('.mi[data-id="'+id+'"]');
   if(el){el.classList.add('on');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 }
-function sColor(st){
-  return({계약완료:{bg:'rgba(56,139,253,.2)',t:'#7ab8fd'},제안중:{bg:'rgba(163,113,247,.2)',t:'#c3a4f8'},
-    데모완료:{bg:'rgba(163,113,247,.15)',t:'#c3a4f8'},검토중:{bg:'rgba(56,139,253,.15)',t:'var(--saas)'},
-    이탈:{bg:'rgba(248,81,73,.15)',t:'var(--red)'},재활성화:{bg:'rgba(210,153,34,.15)',t:'var(--amber)'}})[st]||{bg:'rgba(110,118,129,.12)',t:'var(--text3)'};
-}
-function mColor(st){
-  return({매칭완료:{bg:'rgba(63,185,80,.2)',t:'var(--green)'},매칭중:{bg:'rgba(63,185,80,.15)',t:'#7ce89a'},
-    이탈:{bg:'rgba(248,81,73,.15)',t:'var(--red)'}})[st]||{bg:'rgba(110,118,129,.12)',t:'var(--text3)'};
-}
 
 // ── 상세 패널 ─────────────────────────────────────────────────
 function openP(id){
   var s=S.find(function(x){return x.id===id;});
   if(!s)return;
-  var today=new Date(); today.setHours(0,0,0,0);
-  var ov=s.nextAction&&new Date(s.nextAction)<today;
   var e=parseInt(s.elapsed)||0;
   document.getElementById('pn').textContent=s.name;
-  document.getElementById('pm').innerHTML=bdg(s.icp)+' '+esc(s.phone||'')+'&nbsp;·&nbsp;경과 '+e+'일 · 미팅 '+(s.mtgCount||0)+'회';
+  document.getElementById('pm').innerHTML=
+    bdg(s.icp)+' '+esc(s.phone||'')+'&nbsp;·&nbsp;경과 '+e+'일 · 미팅 '+(s.mtgCount||0)+'회';
+
   document.getElementById('pbody').innerHTML=
     '<div class="ps"><div class="pst">기본 정보</div>'+
-      pr('연락처',s.phone)+pr('주소',s.address)+pr('취급품목',s.items)+pr('ERP',s.erp||'없음')+pr('리드소스',s.source)+
+      pr('연락처',s.phone)+pr('주소',s.address)+
+      pr('취급품목',s.items)+pr('ERP',s.erp||'없음')+pr('리드소스',s.source)+
     '</div>'+
     '<div class="ps"><div class="pst">액션 현황</div>'+
-      '<div class="pr"><div class="prl">최근진행일</div><div class="prv">'+
-        '<input class="di" type="date" value="'+(s.lastContact||'')+'" onchange="upd('+s.id+',\'lastContact\',this.value)">'+
-      '</div></div>'+
-      '<div class="pr"><div class="prl">다음액션일</div><div class="prv">'+
-        '<input class="di" type="date" value="'+(s.nextAction||'')+'" onchange="upd('+s.id+',\'nextAction\',this.value)">'+
-      '</div></div>'+
-      '<div class="pr"><div class="prl">내용</div><div class="prv">'+
-        '<textarea class="di" onchange="upd('+s.id+',\'nextAct\',this.value)">'+esc(s.nextAct||'')+'</textarea>'+
-      '</div></div>'+
+      pr('최근진행일',s.lastContact)+
+      pr('다음액션일',s.nextAction||'미설정')+
+      pr('내용',s.nextAct)+
     '</div>'+
     (s.mtgMemo||s.mtg1?
-    '<div class="ps"><div class="pst">미팅 ('+s.mtgCount+'회)</div>'+
-      (s.mtg1?pr('최초미팅',s.mtg1):'')+
-      '<textarea class="di" onchange="upd('+s.id+',\'mtgMemo\',this.value)">'+esc(s.mtgMemo||'')+'</textarea>'+
-    '</div>':'')+
+      '<div class="ps"><div class="pst">미팅 ('+s.mtgCount+'회)</div>'+
+        (s.mtg1?pr('최초미팅',s.mtg1):'')+
+        (s.mtgMemo?'<div style="font-size:11px;color:var(--text2);background:var(--bg3);border-radius:5px;padding:8px 10px;white-space:pre-wrap;line-height:1.6;margin-top:4px">'+esc(s.mtgMemo)+'</div>':'')+
+      '</div>':'')+
     '<div class="ps"><div class="pst">비즈니스 현황</div>'+
-      bcard(s.id,'🔵 주문톡 SaaS','saasSt',s.saasSt,['미진행','검토중','데모완료','제안중','계약완료','이탈','재활성화'],'saasDate',s.saasDate,'saasMemo',s.saasMemo,'')+
-      bcard(s.id,'🟢 매칭서비스','matchSt',s.matchSt,['미진행','매칭중','매칭완료','이탈'],'matchDate',s.matchDate,'matchMemo',s.matchMemo,s.matchCnt?'연결매장 '+s.matchCnt+'개':'')+
-      bcard(s.id,'🟣 B2B 중개','bizSt',s.bizSt,['미진행','중개중','거래성사','이탈'],'bizDate',s.bizDate,'bizMemo',s.bizMemo,s.bizPartner?'중도매인: '+s.bizPartner:'')+
+      bcard('🔵 주문톡 SaaS',s.saasSt,s.saasDate,'',s.saasMemo)+
+      bcard('🟢 매칭서비스',s.matchSt,s.matchDate,s.matchCnt?'연결매장 '+s.matchCnt+'개':'',s.matchMemo)+
+      bcard('🟣 B2B 중개',s.bizSt,s.bizDate,s.bizPartner?'중도매인: '+s.bizPartner:'',s.bizMemo)+
     '</div>';
+
   document.getElementById('panel').classList.add('on');
 }
-function pr(l,v){return '<div class="pr"><div class="prl">'+l+'</div><div class="prv">'+esc(v||'–')+'</div></div>';}
-function bcard(id,title,sk,sv,opts,dk,dv,mk,mv,sub){
-  return '<div class="bc">'+
-    '<div class="bch"><span class="bct">'+title+'</span>'+
-      '<select class="fi" onchange="upd('+id+',\''+sk+'\',this.value)">'+
-        opts.map(function(v){return'<option'+(v===sv?' selected':'')+'>'+v+'</option>';}).join('')+
-      '</select></div>'+
-    (sub?'<div style="font-size:10px;color:var(--text3);margin-bottom:4px">'+sub+'</div>':'')+
-    '<input class="di" type="date" value="'+(dv||'')+'" onchange="upd('+id+',\''+dk+'\',this.value)" style="margin-bottom:4px">'+
-    '<textarea class="di" onchange="upd('+id+',\''+mk+'\',this.value)">'+esc(mv||'')+'</textarea>'+
-  '</div>';
-}
 
-// 시트 데이터 업데이트 (Sheets API write)
-function upd(id,key,value) {
-  var store=S.find(function(s){return s.id===id;});
-  if(store) store[key]=value;
-  // TODO: Sheets API batchUpdate로 저장 (읽기전용 토큰이면 write 스코프 추가 필요)
-  // 현재는 로컬 메모리만 업데이트 (새로고침 시 초기화)
+function pr(l,v){
+  return '<div class="pr"><div class="prl">'+l+'</div><div class="prv">'+esc(v||'–')+'</div></div>';
+}
+function bcard(title,st,dt,sub,memo){
+  return '<div class="bc">'+
+    '<div class="bch"><span class="bct">'+title+'</span>'+bdg(st)+'</div>'+
+    (dt?'<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+dt+'</div>':'')+
+    (sub?'<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+sub+'</div>':'')+
+    (memo?'<div style="font-size:10px;color:var(--text2);line-height:1.5;margin-top:2px">'+esc(memo)+'</div>':'')+
+  '</div>';
 }
 
 function closeP(){document.getElementById('panel').classList.remove('on');}
@@ -743,16 +686,13 @@ function updateKPI(){
 }
 
 // ── 유틸 ─────────────────────────────────────────────────────
-function bdg(v){if(!v||v==='미진행'||v==='')return'';return'<span class="b b'+v.replace(/\s/g,'')+'">'+v+'</span>';}
+function bdg(v){
+  if(!v||v==='미진행'||v==='')return'';
+  return'<span class="b b'+v.replace(/\s/g,'')+'">'+v+'</span>';
+}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function setProg(p){document.getElementById('prog').style.width=p+'%';}
 function db(fn){clearTimeout(_dbt);_dbt=setTimeout(fn,250);}
-
-// ── GIS 로드 ─────────────────────────────────────────────────
-window.onload=function(){initGIS();};
 </script>
-
-<!-- Google Identity Services -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>
