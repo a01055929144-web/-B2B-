@@ -249,6 +249,10 @@ tbody tr:hover{background:var(--bg2)}
         <option value="">ICP 전체</option>
         <option>A등급</option><option>B등급</option><option>C등급</option>
       </select>
+      <select class="fi" id="f-map-exit" onchange="fmap()">
+        <option value="exclude">이탈 제외</option>
+        <option value="">전체 표시</option>
+      </select>
       <span class="fi-count" id="c-map"></span>
     </div>
     <div class="map-wrap">
@@ -266,7 +270,18 @@ tbody tr:hover{background:var(--bg2)}
 <!-- 패널 -->
 <div class="panel" id="panel">
   <div class="ph">
-    <div><div class="pn" id="pn"></div><div class="pm" id="pm"></div></div>
+    <div>
+      <div class="pn" id="pn"></div>
+      <div class="pm" id="pm"></div>
+      <div style="margin-top:4px;display:flex;align-items:center;gap:8px">
+        <span id="save-status" style="font-size:10px;color:var(--green);transition:opacity .5s;opacity:0"></span>
+        <button id="login-btn" onclick="requestWriteAuth(function(){})"
+          style="display:none;padding:3px 8px;font-size:10px;background:var(--accent);color:#fff;
+          border:none;border-radius:4px;cursor:pointer;font-family:inherit">
+          🔑 편집 권한 로그인
+        </button>
+      </div>
+    </div>
     <button class="pclose" onclick="closeP()">✕</button>
   </div>
   <div class="pbody" id="pbody"></div>
@@ -277,8 +292,9 @@ tbody tr:hover{background:var(--bg2)}
 // ※ Google Sheets를 "링크가 있는 모든 사용자 → 뷰어" 공개 설정 필요
 var SHEET_ID   = '1IMfCKDXB-Le-m10TaDr-a6akRfAhAnoTes53_MTu9JY';
 var SHEET_NAME = '유통사 마스터';
-var API_KEY    = 'AIzaSyDJMPPD7lWjk-E_LrmHJAbjnMV6ese-2bo'; // Google Cloud Console → API 키
-// ↑ API 키만 있으면 로그인 불필요 (공개 시트 읽기 전용)
+var API_KEY    = 'AIzaSyDJMPPD7lWjk-E_LrmHJAbjnMV6ese-2bo'; // 읽기용 API 키
+var CLIENT_ID  = '601385534693-7j6iadeaq3ular5r2aq79c2q5ml099qq.apps.googleusercontent.com'; // Google Cloud Console OAuth (승인된 JS 원본에 github.io 추가 필요)
+var WRITE_SCOPE= 'https://www.googleapis.com/auth/spreadsheets';
 
 // ── 상태 ─────────────────────────────────────────────────────
 var S=[],TD=[],fList=[];
@@ -287,11 +303,55 @@ var geoC={};
 var mapInited=false,currentView='today';
 var sortKey='elapsed',sortDir=-1;
 var ROW_H=42,BUFFER=8;
-var _dbt=null;
+var _dbt=null, _tokenClient=null, _writeToken=null;
 
 try{ geoC=JSON.parse(localStorage.getItem('crmGeoKakao')||'{}'); }catch(e){}
+// 저장된 쓰기 토큰 복원
+_writeToken = sessionStorage.getItem('write_token') || null;
 
-window.onload = function(){ loadAll(); };
+window.onload = function(){
+  loadAll();
+  initWriteAuth(); // 쓰기 OAuth 초기화 (백그라운드)
+};
+
+// ── 쓰기 OAuth 초기화 (GIS) ────────────────────────────────────
+function initWriteAuth() {
+  if(typeof google==='undefined'||!google.accounts) {
+    setTimeout(initWriteAuth, 300); return;
+  }
+  _tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope    : WRITE_SCOPE,
+    callback : function(resp) {
+      if(resp.error){ showSaveStatus('⚠️ 로그인 실패: '+resp.error, true); return; }
+      _writeToken = resp.access_token;
+      sessionStorage.setItem('write_token', _writeToken);
+      showSaveStatus('✅ 로그인 완료 — 이제 수정 내용이 시트에 저장됩니다');
+      // 대기 중인 저장 실행
+      if(typeof _pendingSave==='function'){ _pendingSave(); _pendingSave=null; }
+    }
+  });
+}
+
+var _pendingSave = null;
+
+function requestWriteAuth(callback) {
+  if(_writeToken) { callback(); return; }
+  _pendingSave = callback;
+  _tokenClient.requestAccessToken();
+}
+
+function showSaveStatus(msg, isErr) {
+  var el = document.getElementById('save-status');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.color = isErr ? 'var(--red)' : 'var(--green)';
+  el.style.opacity = '1';
+  setTimeout(function(){ el.style.opacity='0'; }, 3000);
+  // 로그인 성공 시 버튼 숨기기
+  var lb = document.getElementById('login-btn');
+  if(lb && _writeToken) lb.style.display='none';
+}
 
 // ── 데이터 로드 (Sheets API 공개 읽기 — 로그인 불필요) ───────
 function loadAll() {
@@ -494,9 +554,18 @@ function initKMap(){
 function fmap(){
   var q=(document.getElementById('q-map')||{}).value||''; q=q.toLowerCase();
   var icp=(document.getElementById('f-map-icp')||{}).value||'';
+  var exitFilter=(document.getElementById('f-map-exit')||{}).value;
+  var DONE=['계약완료','매칭완료','거래성사','이탈'];
   var filtered=S.filter(function(s){
-    return s.address&&(!icp||s.icp===icp)&&
-      (!q||s.name.toLowerCase().includes(q)||s.address.toLowerCase().includes(q));
+    if(!s.address) return false;
+    if(icp && s.icp!==icp) return false;
+    if(q && !s.name.toLowerCase().includes(q) && !s.address.toLowerCase().includes(q)) return false;
+    // 이탈 제외: 3개 비즈니스 모두 이탈/완료인 경우 제외
+    if(exitFilter==='exclude'){
+      var allDone = s.saasSt==='이탈' && s.matchSt==='이탈' && s.bizSt==='이탈';
+      if(allDone) return false;
+    }
+    return true;
   });
   document.getElementById('c-map').textContent=filtered.length+'개';
   renderML(filtered);
@@ -629,27 +698,75 @@ function openP(id){
       pr('취급품목',s.items)+pr('ERP',s.erp||'없음')+pr('리드소스',s.source)+
     '</div>'+
     '<div class="ps"><div class="pst">액션 현황</div>'+
-      pr('최근진행일',s.lastContact)+
-      pr('다음액션일',s.nextAction||'미설정')+
-      pr('내용',s.nextAct)+
+      prow('최근진행일','date',s.id,'lastContact',s.lastContact)+
+      prow('다음액션일','date',s.id,'nextAction',s.nextAction)+
+      prowta('내용',s.id,'nextAct',s.nextAct)+
     '</div>'+
     (s.mtgMemo||s.mtg1?
       '<div class="ps"><div class="pst">미팅 ('+s.mtgCount+'회)</div>'+
         (s.mtg1?pr('최초미팅',s.mtg1):'')+
-        (s.mtgMemo?'<div style="font-size:11px;color:var(--text2);background:var(--bg3);border-radius:5px;padding:8px 10px;white-space:pre-wrap;line-height:1.6;margin-top:4px">'+esc(s.mtgMemo)+'</div>':'')+
+        prowta('메모',s.id,'mtgMemo',s.mtgMemo)+
       '</div>':'')+
     '<div class="ps"><div class="pst">비즈니스 현황</div>'+
-      bcard('🔵 주문톡 SaaS',s.saasSt,s.saasDate,'',s.saasMemo)+
-      bcard('🟢 매칭서비스',s.matchSt,s.matchDate,s.matchCnt?'연결매장 '+s.matchCnt+'개':'',s.matchMemo)+
-      bcard('🟣 B2B 중개',s.bizSt,s.bizDate,s.bizPartner?'중도매인: '+s.bizPartner:'',s.bizMemo)+
+      bcardEdit(s.id,'🔵 주문톡 SaaS','saasSt',s.saasSt,
+        ['미진행','검토중','데모완료','제안중','계약완료','이탈','재활성화'],
+        'saasDate',s.saasDate,'saasMemo',s.saasMemo,'')+
+      bcardEdit(s.id,'🟢 매칭서비스','matchSt',s.matchSt,
+        ['미진행','매칭중','매칭완료','이탈'],
+        'matchDate',s.matchDate,'matchMemo',s.matchMemo,
+        s.matchCnt?'연결매장 '+s.matchCnt+'개':'')+
+      bcardEdit(s.id,'🟣 B2B 중개','bizSt',s.bizSt,
+        ['미진행','중개중','거래성사','이탈'],
+        'bizDate',s.bizDate,'bizMemo',s.bizMemo,
+        s.bizPartner?'중도매인: '+s.bizPartner:'')+
     '</div>';
 
   document.getElementById('panel').classList.add('on');
+  // 쓰기 토큰 없으면 로그인 버튼 표시
+  var loginBtn = document.getElementById('login-btn');
+  if(loginBtn) loginBtn.style.display = _writeToken ? 'none' : 'inline-block';
 }
 
 function pr(l,v){
   return '<div class="pr"><div class="prl">'+l+'</div><div class="prv">'+esc(v||'–')+'</div></div>';
 }
+
+// 수정 가능한 입력 행
+function prow(l,type,id,key,val){
+  return '<div class="pr"><div class="prl">'+l+'</div><div class="prv">'+
+    '<input style="width:100%;background:var(--bg3);border:1px solid var(--border);'+
+    'color:var(--text);border-radius:4px;padding:4px 7px;font-size:11px;font-family:inherit;outline:none" '+
+    'type="'+type+'" value="'+esc(val||'')+'" '+
+    'onchange="upd('+id+',''+key+'',this.value)" '+
+    'onfocus="this.style.borderColor='var(--accent)'" '+
+    'onblur="this.style.borderColor='var(--border)'">'+
+  '</div></div>';
+}
+function prowta(l,id,key,val){
+  return '<div class="pr" style="align-items:flex-start"><div class="prl" style="padding-top:6px">'+l+'</div><div class="prv">'+
+    '<textarea style="width:100%;min-height:56px;background:var(--bg3);border:1px solid var(--border);'+
+    'color:var(--text);border-radius:4px;padding:5px 7px;font-size:11px;font-family:inherit;outline:none;resize:vertical" '+
+    'onchange="upd('+id+',''+key+'',this.value)" '+
+    'onfocus="this.style.borderColor='var(--accent)'" '+
+    'onblur="this.style.borderColor='var(--border)'">'+esc(val||'')+'</textarea>'+
+  '</div></div>';
+}
+
+// 수정 가능한 비즈니스 카드
+function bcardEdit(id,title,sk,sv,opts,dk,dv,mk,mv,sub){
+  var sel='<select style="background:var(--bg3);border:1px solid var(--border);color:var(--text);'+
+    'border-radius:4px;padding:3px 6px;font-size:11px;font-family:inherit;outline:none;cursor:pointer" '+
+    'onchange="upd('+id+',''+sk+'',this.value)">'+
+    opts.map(function(v){return'<option'+(v===sv?' selected':'')+'>'+v+'</option>';}).join('')+
+  '</select>';
+  return '<div class="bc">'+
+    '<div class="bch"><span class="bct">'+title+'</span>'+sel+'</div>'+
+    (sub?'<div style="font-size:10px;color:var(--text3);margin-bottom:4px">'+sub+'</div>':'')+
+    prow('진행일','date',id,dk,dv)+
+    prowta('메모',id,mk,mv)+
+  '</div>';
+}
+
 function bcard(title,st,dt,sub,memo){
   return '<div class="bc">'+
     '<div class="bch"><span class="bct">'+title+'</span>'+bdg(st)+'</div>'+
@@ -657,6 +774,41 @@ function bcard(title,st,dt,sub,memo){
     (sub?'<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+sub+'</div>':'')+
     (memo?'<div style="font-size:10px;color:var(--text2);line-height:1.5;margin-top:2px">'+esc(memo)+'</div>':'')+
   '</div>';
+}
+
+// 컬럼 매핑 (1-based)
+var COL_MAP={phone:2,address:3,items:4,erp:5,icp:6,source:7,
+  lastContact:8,nextAction:10,nextAct:11,mtgMemo:18,
+  saasSt:19,saasDate:20,saasMemo:21,matchSt:22,matchCnt:23,
+  matchDate:24,matchMemo:25,bizSt:26,bizPartner:27,bizDate:28,bizMemo:29};
+
+function colLetter(n){var s='';while(n>0){s=String.fromCharCode(64+(n%26||26))+s;n=Math.floor((n-1)/26);}return s;}
+
+function upd(id,key,value){
+  var store=S.find(function(s){return s.id===id;});
+  if(store) store[key]=value; // 메모리 즉시 반영
+
+  var col=COL_MAP[key];
+  if(!col) return;
+
+  function doSave(){
+    var row=id+6;
+    var cell=SHEET_NAME+'!'+colLetter(col)+row;
+    fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
+      '/values/'+encodeURIComponent(cell)+'?valueInputOption=USER_ENTERED',{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+_writeToken,'Content-Type':'application/json'},
+      body:JSON.stringify({range:cell,majorDimension:'ROWS',values:[[value]]})
+    })
+    .then(function(r){
+      if(r.status===401){_writeToken=null;sessionStorage.removeItem('write_token');requestWriteAuth(doSave);return;}
+      if(!r.ok){showSaveStatus('⚠️ 저장 실패',true);return;}
+      showSaveStatus('✅ 저장됨');
+    })
+    .catch(function(e){showSaveStatus('⚠️ 오류: '+e.message,true);});
+  }
+
+  requestWriteAuth(doSave);
 }
 
 function closeP(){document.getElementById('panel').classList.remove('on');}
@@ -694,5 +846,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function setProg(p){document.getElementById('prog').style.width=p+'%';}
 function db(fn){clearTimeout(_dbt);_dbt=setTimeout(fn,250);}
 </script>
+<!-- Google Identity Services (쓰기 OAuth용) -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>
