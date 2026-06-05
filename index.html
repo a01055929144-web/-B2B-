@@ -127,6 +127,8 @@ textarea.edit-input{min-height:56px;resize:vertical}
 .sp{width:32px;height:32px;border:2.5px solid var(--bg3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .lt{font-size:12px;color:var(--text3)}
+.done-btn{padding:4px 10px;font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
+.done-btn:hover{border-color:var(--green);color:var(--green)}
 @media(max-width:700px){
   .map-side{display:none}.panel{width:100%}
   td:nth-child(4),th:nth-child(4),td:nth-child(5),th:nth-child(5){display:none}
@@ -410,14 +412,7 @@ function renderToday(){
           '<div class="ca">'+
             '<div class="cd">'+(s.nextAction||'')+'</div>'+
             '<div style="margin-bottom:6px">'+esc(s.nextAct||'')+'</div>'+
-            '<button onclick="event.stopPropagation();doneTask('+s.id+')" '+
-              'style="padding:4px 10px;font-size:11px;background:var(--bg3);'+
-              'border:1px solid var(--border);border-radius:4px;color:var(--text2);'+
-              'cursor:pointer;font-family:inherit" '+
-              'onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" '+
-              'onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">'+
-              '✓ 완료'+
-            '</button>'+
+            '<button class="done-btn" onclick="event.stopPropagation();doneTask('+s.id+')">✓ 완료</button>'+
           '</div>'+
         '</div>';
       }).join('')+'</div>';
