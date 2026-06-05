@@ -102,6 +102,10 @@ tbody tr:hover{background:var(--bg2)}
 .kinfo-close:hover{color:#E6EDF3}
 .panel{position:fixed;right:0;top:52px;bottom:0;width:360px;background:var(--bg2);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .22s ease;z-index:200;display:flex;flex-direction:column}
 .panel.on{transform:translateX(0)}
+/* 패널 열릴 때 메인 콘텐츠 밀어내기 */
+.app{transition:padding-right .22s ease}
+.app.panel-open{padding-right:360px}
+@media(max-width:700px){.app.panel-open{padding-right:0}}
 .ph{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
 .pn{font-size:15px;font-weight:700;margin-bottom:3px}
 .pm{font-size:11px;color:var(--text3)}
@@ -647,6 +651,7 @@ function openP(id){
   });
 
   document.getElementById('panel').classList.add('on');
+  document.querySelector('.app').classList.add('panel-open');
   var lb=document.getElementById('login-btn');
   if(lb) lb.style.display=_writeToken?'none':'inline-block';
 }
@@ -701,7 +706,10 @@ function updField(id, key, value){
   requestWriteAuth(doSave);
 }
 
-function closeP(){ document.getElementById('panel').classList.remove('on'); }
+function closeP(){
+  document.getElementById('panel').classList.remove('on');
+  document.querySelector('.app').classList.remove('panel-open');
+}
 document.addEventListener('click',function(e){
   if(!e.target.closest('#panel')&&!e.target.closest('tr')&&
      !e.target.closest('.card')&&!e.target.closest('.mi')&&
@@ -744,26 +752,31 @@ function doneTask(id){
   // 시트에 최근진행일=오늘, 다음액션일=비움 으로 저장
   function saveLastContact(){
     var row = id + 6;
-    // 최근진행일(H열=8) 업데이트
-    var cell1 = SHEET_NAME+'!H'+row;
-    fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
-      '/values/'+encodeURIComponent(cell1)+'?valueInputOption=USER_ENTERED',{
-      method:'PUT',
+    var cell1 = SHEET_NAME+'!H'+row;  // 최근진행일
+    var cell2 = SHEET_NAME+'!J'+row;  // 다음액션일
+
+    // batchUpdate로 H열=오늘, J열=빈값 동시 처리
+    fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values:batchUpdate',{
+      method:'POST',
       headers:{'Authorization':'Bearer '+_writeToken,'Content-Type':'application/json'},
-      body:JSON.stringify({range:cell1,majorDimension:'ROWS',values:[[today]]})
+      body:JSON.stringify({
+        valueInputOption:'USER_ENTERED',
+        data:[
+          {range:cell1, majorDimension:'ROWS', values:[[today]]},
+          {range:cell2, majorDimension:'ROWS', values:[['']]}
+        ]
+      })
     }).then(function(){
-      // 다음액션일(J열=10) 비우기
-      var cell2 = SHEET_NAME+'!J'+row;
+      // J열 clearValues로 완전히 제거 (PUT 빈값은 무시될 수 있음)
       return fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
-        '/values/'+encodeURIComponent(cell2)+'?valueInputOption=USER_ENTERED',{
-        method:'PUT',
+        '/values/'+encodeURIComponent(cell2)+':clear',{
+        method:'POST',
         headers:{'Authorization':'Bearer '+_writeToken,'Content-Type':'application/json'},
-        body:JSON.stringify({range:cell2,majorDimension:'ROWS',values:[['']]})
+        body:JSON.stringify({})
       });
     }).then(function(){
-      // allStores 메모리도 업데이트
       var store = S.find(function(s){return s.id===id;});
-      if(store){ store.lastContact=today; store.nextAction=''; }
+      if(store){ store.lastContact=today; store.nextAction=''; store.nextAct=''; }
       showSS('✅ 완료 처리됨');
       updateKPI();
     }).catch(function(e){ showSS('⚠️ 저장 오류: '+e.message, true); });
