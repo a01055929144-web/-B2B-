@@ -407,8 +407,18 @@ function renderToday(){
           '<div class="cbs">'+bdg(s.icp)+bdg(s.saasSt)+bdg(s.matchSt)+bdg(s.bizSt)+
             (s.overdue?'<span class="b bOVER">기한초과</span>':'<span class="b bTODAY">오늘</span>')+
           '</div></div>'+
-          '<div class="ca"><div class="cd">'+(s.nextAction||'')+'</div>'+
-          '<div>'+esc(s.nextAct||'')+'</div></div>'+
+          '<div class="ca">'+
+            '<div class="cd">'+(s.nextAction||'')+'</div>'+
+            '<div style="margin-bottom:6px">'+esc(s.nextAct||'')+'</div>'+
+            '<button onclick="event.stopPropagation();doneTask('+s.id+')" '+
+              'style="padding:4px 10px;font-size:11px;background:var(--bg3);'+
+              'border:1px solid var(--border);border-radius:4px;color:var(--text2);'+
+              'cursor:pointer;font-family:inherit" '+
+              'onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" '+
+              'onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">'+
+              '✓ 완료'+
+            '</button>'+
+          '</div>'+
         '</div>';
       }).join('')+'</div>';
   }).join('');
@@ -729,6 +739,44 @@ function bdg(v){
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function setProg(p){ document.getElementById('prog').style.width=p+'%'; }
+// 오늘 할 일 완료 처리
+function doneTask(id){
+  var today = new Date().toISOString().slice(0,10);
+  // 메모리에서 즉시 제거
+  TD = TD.filter(function(s){ return s.id !== id; });
+  renderToday();
+
+  // 시트에 최근진행일=오늘, 다음액션일=비움 으로 저장
+  function saveLastContact(){
+    var row = id + 6;
+    // 최근진행일(H열=8) 업데이트
+    var cell1 = SHEET_NAME+'!H'+row;
+    fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
+      '/values/'+encodeURIComponent(cell1)+'?valueInputOption=USER_ENTERED',{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+_writeToken,'Content-Type':'application/json'},
+      body:JSON.stringify({range:cell1,majorDimension:'ROWS',values:[[today]]})
+    }).then(function(){
+      // 다음액션일(J열=10) 비우기
+      var cell2 = SHEET_NAME+'!J'+row;
+      return fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
+        '/values/'+encodeURIComponent(cell2)+'?valueInputOption=USER_ENTERED',{
+        method:'PUT',
+        headers:{'Authorization':'Bearer '+_writeToken,'Content-Type':'application/json'},
+        body:JSON.stringify({range:cell2,majorDimension:'ROWS',values:[['']]})
+      });
+    }).then(function(){
+      // allStores 메모리도 업데이트
+      var store = S.find(function(s){return s.id===id;});
+      if(store){ store.lastContact=today; store.nextAction=''; }
+      showSS('✅ 완료 처리됨');
+      updateKPI();
+    }).catch(function(e){ showSS('⚠️ 저장 오류: '+e.message, true); });
+  }
+
+  requestWriteAuth(saveLastContact);
+}
+
 function db(fn){ clearTimeout(_dbt); _dbt=setTimeout(fn,250); }
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
