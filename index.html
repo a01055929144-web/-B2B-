@@ -16,6 +16,736 @@
   --radius:10px;--radius-sm:6px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.app{display:flex;flex-direction:column;height:100vh}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:100}
+.header-logo{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.header-nav{display:flex;gap:4px}
+.nav-btn{padding:5px 12px;border-radius:var(--radius-sm);border:none;background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.nav-btn:hover{background:var(--bg3);color:var(--text)}
+.nav-btn.active{background:var(--accent);color:#fff}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-status{font-size:11px;color:var(--text3)}
+.header-refresh{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.view{display:none;flex:1;overflow:hidden}
+.view.active{display:flex;flex-direction:column}
+.kpi-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:0;flex-shrink:0;overflow-x:auto}
+.kpi-bar::-webkit-scrollbar{display:none}
+.kpi{display:flex;flex-direction:column;gap:1px;padding:0 14px;flex-shrink:0}
+.kpi-label{font-size:10px;color:var(--text3);letter-spacing:.3px}
+.kpi-value{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.kpi-sep{width:1px;height:28px;background:var(--border);align-self:center;flex-shrink:0}
+.prog-bar{height:2px;background:var(--bg3);flex-shrink:0}
+.prog-fill{height:100%;background:var(--accent);transition:width .3s;width:0}
+.filter-bar{padding:8px 20px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+.fi{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:5px 9px;font-size:12px;font-family:inherit;outline:none}
+.fi:focus{border-color:var(--accent)}
+.fi-search{flex:1;min-width:150px;max-width:260px}
+.fi-count{font-size:11px;color:var(--text3);margin-left:auto}
+.tw{flex:1;overflow-y:auto}
+.tw::-webkit-scrollbar{width:5px}
+.tw::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+table{width:100%;border-collapse:collapse}
+thead{position:sticky;top:0;background:var(--bg);z-index:5}
+th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+td{padding:9px 12px;border-bottom:1px solid rgba(48,54,61,.4);font-size:12px;vertical-align:middle;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tbody tr{cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--bg2)}
+.b{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.bA{background:rgba(63,185,80,.15);color:var(--green)}
+.bB{background:rgba(210,153,34,.15);color:var(--amber)}
+.bC{background:rgba(110,118,129,.12);color:var(--text3)}
+.b계약완료,.b매칭완료,.b거래성사{background:rgba(63,185,80,.15);color:var(--green)}
+.b제안중{background:rgba(163,113,247,.15);color:var(--biz)}
+.b데모완료{background:rgba(163,113,247,.1);color:#c3a4f8}
+.b검토중{background:rgba(56,139,253,.12);color:var(--saas)}
+.b매칭중,.b중개중{background:rgba(63,185,80,.1);color:#7ce89a}
+.b이탈{background:rgba(248,81,73,.1);color:var(--red)}
+.b재활성화{background:rgba(210,153,34,.12);color:var(--amber)}
+.b미진행{background:rgba(110,118,129,.08);color:var(--text3)}
+.bOVER{background:rgba(248,81,73,.15);color:var(--red)}
+.bTODAY{background:rgba(210,153,34,.15);color:var(--amber)}
+.cards{flex:1;overflow-y:auto;padding:12px 20px;display:flex;flex-direction:column;gap:6px}
+.grp-title{font-size:11px;font-weight:600;color:var(--text3);padding:6px 0 4px;border-bottom:1px solid var(--border);margin-bottom:6px;display:flex;justify-content:space-between}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:8px}
+.card:hover{border-color:var(--accent)}
+.card.ov{border-color:rgba(248,81,73,.35)}
+.cn{font-size:13px;font-weight:600;margin-bottom:2px}
+.cm{font-size:11px;color:var(--text3);margin-bottom:4px}
+.cbs{display:flex;gap:3px;flex-wrap:wrap}
+.ca{font-size:11px;color:var(--text2);text-align:right}
+.cd{font-size:10px;color:var(--text3);margin-bottom:2px}
+.map-wrap{flex:1;display:flex;overflow:hidden}
+#kmap{flex:1;min-height:0}
+.map-side{width:280px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column}
+.map-side-hdr{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.geo-st{font-size:10px;color:var(--text3);font-weight:400}
+.mlist{flex:1;overflow-y:auto}
+.mlist::-webkit-scrollbar{width:4px}
+.mlist::-webkit-scrollbar-thumb{background:var(--bg3)}
+.mi{padding:10px 14px;border-bottom:1px solid rgba(48,54,61,.4);cursor:pointer;transition:background .1s}
+.mi:hover{background:var(--bg3)}
+.mi.on{background:rgba(31,111,235,.1);border-left:2px solid var(--accent)}
+.mi-n{font-size:12px;font-weight:500;margin-bottom:2px}
+.mi-m{font-size:10px;color:var(--text3);line-height:1.4}
+.km{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.85);box-shadow:0 2px 8px rgba(0,0,0,.5);cursor:pointer;transform:translate(-50%,-50%)}
+.km:hover{transform:translate(-50%,-50%) scale(1.15)}
+.kmA{background:#3FB950}.kmB{background:#D29922}.kmC{background:#6E7681}
+.kinfo{background:#1e2631;border-radius:10px;padding:11px 13px;min-width:190px;font-family:'Pretendard',sans-serif;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.kinfo::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:#1e2631;border-bottom:0}
+.kinfo-name{font-size:13px;font-weight:600;color:#E6EDF3;margin-bottom:5px}
+.kinfo-row{font-size:11px;color:#8B949E;margin-bottom:2px}
+.kinfo-bs{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.kinfo-close{position:absolute;top:6px;right:8px;background:none;border:none;color:#6E7681;font-size:14px;cursor:pointer;padding:2px}
+.kinfo-close:hover{color:#E6EDF3}
+.panel{position:fixed;right:0;top:52px;bottom:0;width:360px;background:var(--bg2);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .22s ease;z-index:200;display:flex;flex-direction:column}
+.panel.on{transform:translateX(0)}
+.ph{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.pn{font-size:15px;font-weight:700;margin-bottom:3px}
+.pm{font-size:11px;color:var(--text3)}
+.pclose{border:none;background:var(--bg3);color:var(--text2);width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:12px}
+.pbody{flex:1;overflow-y:auto;padding:14px 16px}
+.pbody::-webkit-scrollbar{width:4px}
+.pbody::-webkit-scrollbar-thumb{background:var(--bg3)}
+.ps{margin-bottom:14px}
+.pst{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.pr{display:flex;gap:6px;margin-bottom:6px;font-size:11px}
+.prl{width:72px;flex-shrink:0;color:var(--text3);padding-top:5px}
+.prv{flex:1;word-break:break-word;line-height:1.5}
+.bc{background:var(--bg3);border-radius:5px;padding:9px 11px;margin-bottom:6px}
+.bch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.bct{font-size:11px;font-weight:600}
+.edit-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:5px 8px;font-size:11px;font-family:inherit;outline:none}
+.edit-input:focus{border-color:var(--accent)}
+textarea.edit-input{min-height:56px;resize:vertical}
+.edit-select{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:3px 7px;font-size:11px;font-family:inherit;outline:none;cursor:pointer}
+.edit-select:focus{border-color:var(--accent)}
+.save-bar{font-size:10px;margin-top:4px;transition:opacity .5s;opacity:0}
+.ld{display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:10px}
+.sp{width:32px;height:32px;border:2.5px solid var(--bg3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lt{font-size:12px;color:var(--text3)}
+@media(max-width:700px){
+  .map-side{display:none}.panel{width:100%}
+  td:nth-child(4),th:nth-child(4),td:nth-child(5),th:nth-child(5){display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="header">
+  <div class="header-logo">🏭 B2B 유통사 리드 관리</div>
+  <nav class="header-nav">
+    <button class="nav-btn active" id="n-today" onclick="sw('today')">오늘 할 일</button>
+    <button class="nav-btn" id="n-list" onclick="sw('list')">유통사 목록</button>
+    <button class="nav-btn" id="n-map" onclick="sw('map')">지도</button>
+  </nav>
+  <div class="header-right">
+    <span class="header-status" id="hst">로딩 중...</span>
+    <button class="header-refresh" onclick="loadAll()" title="새로고침">↻</button>
+  </div>
+</header>
+
+<div class="kpi-bar">
+  <div class="kpi"><div class="kpi-label">전체</div><div class="kpi-value" id="k0">–</div></div>
+  <div class="kpi-sep"></div>
+  <div class="kpi"><div class="kpi-label">A등급</div><div class="kpi-value" style="color:var(--green)" id="k1">–</div></div>
+  <div class="kpi-sep"></div>
+  <div class="kpi"><div class="kpi-label">액션필요</div><div class="kpi-value" style="color:var(--red)" id="k2">–</div></div>
+  <div class="kpi-sep"></div>
+  <div class="kpi"><div class="kpi-label">주문톡계약</div><div class="kpi-value" style="color:var(--saas)" id="k3">–</div></div>
+  <div class="kpi-sep"></div>
+  <div class="kpi"><div class="kpi-label">매칭완료</div><div class="kpi-value" style="color:var(--green)" id="k4">–</div></div>
+  <div class="kpi-sep"></div>
+  <div class="kpi"><div class="kpi-label">거래성사</div><div class="kpi-value" style="color:var(--biz)" id="k5">–</div></div>
+</div>
+<div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+
+<div class="main">
+
+  <div class="view active" id="v-today">
+    <div class="filter-bar">
+      <input class="fi fi-search" id="q-today" placeholder="이름 검색..." oninput="db(renderToday)">
+      <span class="fi-count" id="c-today"></span>
+    </div>
+    <div class="cards" id="cards">
+      <div class="ld"><div class="sp"></div><div class="lt">데이터 불러오는 중...</div></div>
+    </div>
+  </div>
+
+  <div class="view" id="v-list">
+    <div class="filter-bar">
+      <input class="fi fi-search" id="q-list" placeholder="이름·주소·품목 검색..." oninput="db(renderList)">
+      <select class="fi" id="f-icp" onchange="renderList()">
+        <option value="">ICP 전체</option>
+        <option>A등급</option><option>B등급</option><option>C등급</option>
+      </select>
+      <select class="fi" id="f-saas" onchange="renderList()">
+        <option value="">주문톡 전체</option>
+        <option>검토중</option><option>데모완료</option><option>제안중</option>
+        <option>계약완료</option><option>이탈</option><option>재활성화</option>
+      </select>
+      <select class="fi" id="f-match" onchange="renderList()">
+        <option value="">매칭 전체</option>
+        <option>매칭중</option><option>매칭완료</option><option>이탈</option>
+      </select>
+      <select class="fi" id="f-biz" onchange="renderList()">
+        <option value="">중개 전체</option>
+        <option>미진행</option><option>중개중</option>
+        <option>거래성사</option><option>이탈</option>
+      </select>
+      <span class="fi-count" id="c-list"></span>
+    </div>
+    <div class="tw" id="tw" onscroll="vsRender()">
+      <table>
+        <thead><tr>
+          <th onclick="srt('name')">유통사명</th><th onclick="srt('icp')">ICP</th>
+          <th onclick="srt('phone')">연락처</th><th onclick="srt('address')">주소</th>
+          <th onclick="srt('elapsed')">경과일</th><th onclick="srt('nextAction')">다음액션일</th>
+          <th onclick="srt('saasSt')">주문톡</th><th onclick="srt('matchSt')">매칭</th>
+          <th onclick="srt('bizSt')">중개</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="view" id="v-map">
+    <div class="filter-bar">
+      <input class="fi fi-search" id="q-map" placeholder="이름·주소 검색..." oninput="db(fmap)">
+      <select class="fi" id="f-map-icp" onchange="fmap()">
+        <option value="">ICP 전체</option>
+        <option>A등급</option><option>B등급</option><option>C등급</option>
+      </select>
+      <select class="fi" id="f-map-exit" onchange="fmap()">
+        <option value="exclude">이탈 제외</option>
+        <option value="">전체 표시</option>
+      </select>
+      <span class="fi-count" id="c-map"></span>
+    </div>
+    <div class="map-wrap">
+      <div id="kmap"></div>
+      <div class="map-side">
+        <div class="map-side-hdr">📍 유통사 목록 <span class="geo-st" id="gst"></span></div>
+        <div class="mlist" id="mlist"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- 패널 -->
+<div class="panel" id="panel">
+  <div class="ph">
+    <div style="flex:1;min-width:0">
+      <div class="pn" id="pn"></div>
+      <div class="pm" id="pm"></div>
+      <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span id="save-status" class="save-bar"></span>
+        <button id="login-btn" onclick="requestWriteAuth(function(){})"
+          style="display:none;padding:4px 10px;font-size:11px;background:var(--accent);
+          color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:inherit">
+          🔑 편집 로그인
+        </button>
+      </div>
+    </div>
+    <button class="pclose" onclick="closeP()">✕</button>
+  </div>
+  <div class="pbody" id="pbody"></div>
+</div>
+
+<script>
+// ── 설정 ──────────────────────────────────────────────────────
+var SHEET_ID    = '1IMfCKDXB-Le-m10TaDr-a6akRfAhAnoTes53_MTu9JY';
+var SHEET_NAME  = '유통사 마스터';
+var API_KEY     = 'AIzaSyDJMPPD7lWjk-E_LrmHJAbjnMV6ese-2bo';
+var CLIENT_ID   = '601385534693-7j6iadeaq3ular5r2aq79c2q5ml099qq.apps.googleusercontent.com';
+var WRITE_SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
+
+// ── 상태 ──────────────────────────────────────────────────────
+var S=[], TD=[], fList=[];
+var kakaoMap=null, kakaoOl=null, kakaoMk={};
+var geoC={};
+var mapInited=false, currentView='today';
+var sortKey='elapsed', sortDir=-1;
+var ROW_H=42, BUFFER=8;
+var _dbt=null, _tokenClient=null, _writeToken=null, _pendingSave=null;
+
+try{ geoC=JSON.parse(localStorage.getItem('crmGeoKakao')||'{}'); }catch(e){}
+_writeToken = sessionStorage.getItem('write_token')||null;
+
+window.onload = function(){ loadAll(); initWriteAuth(); };
+
+// ── OAuth 초기화 ───────────────────────────────────────────────
+function initWriteAuth(){
+  if(typeof google==='undefined'||!google.accounts){ setTimeout(initWriteAuth,300); return; }
+  _tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: WRITE_SCOPE,
+    callback: function(resp){
+      if(resp.error){ showSS('⚠️ 로그인 실패: '+resp.error, true); return; }
+      _writeToken = resp.access_token;
+      sessionStorage.setItem('write_token', _writeToken);
+      showSS('✅ 로그인 완료 — 수정 내용이 시트에 저장됩니다');
+      var lb=document.getElementById('login-btn');
+      if(lb) lb.style.display='none';
+      if(typeof _pendingSave==='function'){ _pendingSave(); _pendingSave=null; }
+    }
+  });
+}
+
+function requestWriteAuth(cb){
+  if(_writeToken){ cb(); return; }
+  _pendingSave=cb;
+  _tokenClient.requestAccessToken();
+}
+
+function showSS(msg, isErr){
+  var el=document.getElementById('save-status');
+  if(!el) return;
+  el.textContent=msg;
+  el.style.color=isErr?'var(--red)':'var(--green)';
+  el.style.opacity='1';
+  setTimeout(function(){ el.style.opacity='0'; },3000);
+}
+
+// ── 데이터 로드 ────────────────────────────────────────────────
+function loadAll(){
+  document.getElementById('hst').textContent='로딩 중...';
+  setProg(10);
+  var range=encodeURIComponent(SHEET_NAME+'!A6:AC3500');
+  var url='https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
+    '/values/'+range+'?key='+API_KEY+'&valueRenderOption=FORMATTED_VALUE';
+  fetch(url)
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status+': 시트 접근 실패');
+      return r.json();
+    })
+    .then(function(data){ setProg(70); parseAndRender(data.values||[]); })
+    .catch(function(e){
+      console.error(e);
+      document.getElementById('hst').textContent='⚠️ '+e.message;
+      setProg(0);
+    });
+}
+
+function parseAndRender(rows){
+  var today=new Date(); today.setHours(0,0,0,0);
+  S=rows.map(function(r,i){
+    var name=(r[0]||'').trim(); if(!name) return null;
+    return {
+      id:i, name:name,
+      phone:(r[1]||'').trim(), address:(r[2]||'').trim(),
+      items:(r[3]||'').trim(), erp:(r[4]||'').trim(),
+      icp:(r[5]||'').trim(), source:(r[6]||'').trim(),
+      lastContact:r[7]||'', elapsed:parseInt(r[8])||0,
+      nextAction:r[9]||'', nextAct:(r[10]||'').trim(),
+      mtgCount:parseInt(r[11])||0, mtg1:r[12]||'',
+      mtgMemo:(r[17]||'').trim(),
+      saasSt:(r[18]||'미진행').trim(), saasDate:r[19]||'', saasMemo:(r[20]||'').trim(),
+      matchSt:(r[21]||'미진행').trim(), matchCnt:(r[22]||'').trim(),
+      matchDate:r[23]||'', matchMemo:(r[24]||'').trim(),
+      bizSt:(r[25]||'미진행').trim(), bizPartner:(r[26]||'').trim(),
+      bizDate:r[27]||'', bizMemo:(r[28]||'').trim(),
+    };
+  }).filter(Boolean);
+
+  var DONE=['계약완료','매칭완료','거래성사','이탈'];
+  TD=S.filter(function(s){
+    if(DONE.includes(s.saasSt)&&DONE.includes(s.matchSt)&&DONE.includes(s.bizSt)) return false;
+    if(!s.nextAction) return false;
+    var d=new Date(s.nextAction); d.setHours(0,0,0,0);
+    return d<=today;
+  }).map(function(s){
+    var d=new Date(s.nextAction); d.setHours(0,0,0,0);
+    return Object.assign({},s,{overdue:d<today});
+  });
+
+  setProg(100);
+  updateKPI(); renderToday(); renderList();
+  if(mapInited) fmap();
+  document.getElementById('hst').textContent=
+    '업데이트: '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── 뷰 전환 ───────────────────────────────────────────────────
+function sw(v){
+  currentView=v; closeP();
+  document.querySelectorAll('.view').forEach(function(e){e.classList.remove('active')});
+  document.querySelectorAll('.nav-btn').forEach(function(e){e.classList.remove('active')});
+  document.getElementById('v-'+v).classList.add('active');
+  document.getElementById('n-'+v).classList.add('active');
+  if(v==='map'){ if(!mapInited){initKMap();mapInited=true;} else fmap(); }
+}
+
+// ── 오늘 할 일 ────────────────────────────────────────────────
+function renderToday(){
+  var q=(document.getElementById('q-today')||{}).value||''; q=q.toLowerCase();
+  var list=TD.filter(function(s){return !q||s.name.toLowerCase().includes(q);});
+  document.getElementById('c-today').textContent=list.length+'개';
+  var el=document.getElementById('cards');
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;color:var(--text3);padding:40px;font-size:13px">오늘 액션 없음 🎉</div>';
+    return;
+  }
+  var grps=[
+    {t:'기한 초과',  d:list.filter(function(s){return s.overdue})},
+    {t:'A등급 우선', d:list.filter(function(s){return !s.overdue&&s.icp==='A등급'})},
+    {t:'오늘 처리',  d:list.filter(function(s){return !s.overdue&&s.icp!=='A등급'})},
+  ].filter(function(g){return g.d.length});
+  el.innerHTML=grps.map(function(g){
+    return '<div style="margin-bottom:16px">'+
+      '<div class="grp-title">'+g.t+'<span>'+g.d.length+'개</span></div>'+
+      g.d.map(function(s){
+        return '<div class="card'+(s.overdue?' ov':'')+'" onclick="openP('+s.id+')">'+
+          '<div><div class="cn">'+esc(s.name)+'</div>'+
+          '<div class="cm">'+esc(s.phone||'–')+' · 경과 '+(s.elapsed||0)+'일 · 미팅 '+(s.mtgCount||0)+'회</div>'+
+          '<div class="cbs">'+bdg(s.icp)+bdg(s.saasSt)+bdg(s.matchSt)+bdg(s.bizSt)+
+            (s.overdue?'<span class="b bOVER">기한초과</span>':'<span class="b bTODAY">오늘</span>')+
+          '</div></div>'+
+          '<div class="ca"><div class="cd">'+(s.nextAction||'')+'</div>'+
+          '<div>'+esc(s.nextAct||'')+'</div></div>'+
+        '</div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+
+// ── 목록 (가상스크롤) ─────────────────────────────────────────
+function renderList(){
+  var q=(document.getElementById('q-list')||{}).value||''; q=q.toLowerCase();
+  var icp=(document.getElementById('f-icp')||{}).value||'';
+  var saas=(document.getElementById('f-saas')||{}).value||'';
+  var match=(document.getElementById('f-match')||{}).value||'';
+  var biz=(document.getElementById('f-biz')||{}).value||'';
+  fList=S.filter(function(s){
+    if(icp&&s.icp!==icp) return false;
+    if(saas&&s.saasSt!==saas) return false;
+    if(match&&s.matchSt!==match) return false;
+    if(biz&&s.bizSt!==biz) return false;
+    if(q&&!s.name.toLowerCase().includes(q)&&
+         !String(s.address||'').toLowerCase().includes(q)&&
+         !String(s.items||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  fList.sort(function(a,b){
+    var av=a[sortKey],bv=b[sortKey];
+    if(typeof av==='number'||typeof bv==='number')
+      return((Number(av)||0)-(Number(bv)||0))*sortDir;
+    return String(av||'').localeCompare(String(bv||''),'ko')*sortDir;
+  });
+  document.getElementById('c-list').textContent=fList.length.toLocaleString()+'개';
+  var tw=document.getElementById('tw');
+  if(tw) tw.scrollTop=0;
+  vsRender();
+}
+
+function srt(k){ if(sortKey===k)sortDir*=-1; else{sortKey=k;sortDir=1;} renderList(); }
+
+function vsRender(){
+  var today=new Date(); today.setHours(0,0,0,0);
+  var tw=document.getElementById('tw'), tbody=document.getElementById('tbody');
+  if(!tw||!tbody) return;
+  var top=tw.scrollTop, h=tw.clientHeight, n=fList.length;
+  if(!n){ tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:30px">결과 없음</td></tr>'; return; }
+  var s=Math.max(0,Math.floor(top/ROW_H)-BUFFER);
+  var e=Math.min(n,Math.ceil((top+h)/ROW_H)+BUFFER);
+  tbody.innerHTML=
+    '<tr style="height:'+(s*ROW_H)+'px"><td colspan="9" style="padding:0;border:none"></td></tr>'+
+    fList.slice(s,e).map(function(st){
+      var ov=st.nextAction&&new Date(st.nextAction)<today;
+      var el=st.elapsed||0;
+      return '<tr onclick="openP('+st.id+')" style="height:'+ROW_H+'px">'+
+        '<td style="font-weight:600">'+esc(st.name)+'</td>'+
+        '<td>'+bdg(st.icp)+'</td>'+
+        '<td style="color:var(--text2)">'+esc(st.phone||'–')+'</td>'+
+        '<td style="color:var(--text3)">'+esc(st.address||'–')+'</td>'+
+        '<td style="color:'+(el>=60?'var(--red)':el>=30?'var(--amber)':'var(--text2)')+'">'+el+'</td>'+
+        '<td style="color:'+(ov?'var(--red)':'var(--text2)')+'">'+esc(st.nextAction||'–')+'</td>'+
+        '<td>'+bdg(st.saasSt)+'</td><td>'+bdg(st.matchSt)+'</td><td>'+bdg(st.bizSt)+'</td>'+
+      '</tr>';
+    }).join('')+
+    '<tr style="height:'+((n-e)*ROW_H)+'px"><td colspan="9" style="padding:0;border:none"></td></tr>';
+}
+
+// ── 카카오 지도 ───────────────────────────────────────────────
+function initKMap(){
+  kakaoMap=new kakao.maps.Map(document.getElementById('kmap'),
+    {center:new kakao.maps.LatLng(37.5665,126.9780),level:8});
+  kakao.maps.event.addListener(kakaoMap,'click',function(){closeOl();});
+  fmap();
+}
+
+function fmap(){
+  var q=(document.getElementById('q-map')||{}).value||''; q=q.toLowerCase();
+  var icp=(document.getElementById('f-map-icp')||{}).value||'';
+  var exitF=(document.getElementById('f-map-exit')||{}).value;
+  var filtered=S.filter(function(s){
+    if(!s.address) return false;
+    if(icp&&s.icp!==icp) return false;
+    if(q&&!s.name.toLowerCase().includes(q)&&!s.address.toLowerCase().includes(q)) return false;
+    if(exitF==='exclude'&&s.saasSt==='이탈'&&s.matchSt==='이탈'&&s.bizSt==='이탈') return false;
+    return true;
+  });
+  document.getElementById('c-map').textContent=filtered.length+'개';
+  renderML(filtered);
+  if(!kakaoMap) return;
+  Object.values(kakaoMk).forEach(function(m){m.setMap(null);}); kakaoMk={}; closeOl();
+
+  var uncached=[];
+  filtered.forEach(function(s){
+    if(geoC[s.address]) addKM(s,geoC[s.address].lat,geoC[s.address].lng);
+    else uncached.push(s);
+  });
+
+  if(!uncached.length){ document.getElementById('gst').textContent=''; return; }
+  var geocoder=new kakao.maps.services.Geocoder();
+  var total=uncached.length, done=0;
+  document.getElementById('gst').textContent='변환 0/'+total;
+  uncached.forEach(function(s){
+    geocoder.addressSearch(s.address,function(result,status){
+      if(status===kakao.maps.services.Status.OK&&result[0]){
+        var lat=parseFloat(result[0].y), lng=parseFloat(result[0].x);
+        geoC[s.address]={lat:lat,lng:lng};
+        addKM(s,lat,lng);
+      }
+      done++;
+      document.getElementById('gst').textContent=done<total?'변환 '+done+'/'+total:'';
+      if(done>=total){ try{localStorage.setItem('crmGeoKakao',JSON.stringify(geoC));}catch(e){} }
+    });
+  });
+}
+
+function addKM(store,lat,lng){
+  if(!kakaoMap||kakaoMk[store.id]) return;
+  var c=(store.icp||'C').replace('등급','');
+  var el=document.createElement('div');
+  el.className='km km'+c; el.textContent=c;
+  var m=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(lat,lng),content:el,zIndex:3});
+  m.setMap(kakaoMap);
+  el.addEventListener('click',function(e){
+    e.stopPropagation();
+    openOl(store,new kakao.maps.LatLng(lat,lng));
+    hilML(store.id); openP(store.id);
+  });
+  kakaoMk[store.id]=m;
+}
+
+function openOl(store,pos){
+  closeOl();
+  var sC=stC(store.saasSt), mC=stC(store.matchSt);
+  kakaoOl=new kakao.maps.CustomOverlay({
+    position:new kakao.maps.LatLng(pos.getLat()+0.0003,pos.getLng()),
+    content:'<div class="kinfo">'+
+      '<button class="kinfo-close" onclick="closeOl()">×</button>'+
+      '<div class="kinfo-name">'+esc(store.name)+'</div>'+
+      '<div class="kinfo-row">📞 '+esc(store.phone||'–')+'</div>'+
+      '<div class="kinfo-row">📍 '+esc(store.address)+'</div>'+
+      (store.items?'<div class="kinfo-row">🥬 '+esc(store.items)+'</div>':'')+
+      '<div class="kinfo-bs">'+
+        '<span style="background:'+sC.bg+';color:'+sC.t+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">'+store.saasSt+'</span> '+
+        '<span style="background:'+mC.bg+';color:'+mC.t+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">'+store.matchSt+'</span>'+
+      '</div></div>',
+    zIndex:10
+  });
+  kakaoOl.setMap(kakaoMap);
+}
+function closeOl(){ if(kakaoOl){kakaoOl.setMap(null);kakaoOl=null;} }
+
+function stC(st){
+  var m={'계약완료':{bg:'rgba(56,139,253,.25)',t:'#7ab8fd'},'제안중':{bg:'rgba(163,113,247,.25)',t:'#c3a4f8'},
+    '데모완료':{bg:'rgba(163,113,247,.2)',t:'#c3a4f8'},'검토중':{bg:'rgba(56,139,253,.2)',t:'#7ab8fd'},
+    '매칭완료':{bg:'rgba(63,185,80,.25)',t:'#7ce89a'},'매칭중':{bg:'rgba(63,185,80,.2)',t:'#7ce89a'},
+    '거래성사':{bg:'rgba(163,113,247,.25)',t:'#c3a4f8'},'이탈':{bg:'rgba(248,81,73,.2)',t:'#fca5a5'},
+    '재활성화':{bg:'rgba(210,153,34,.2)',t:'#fcd34d'}};
+  return m[st]||{bg:'rgba(110,118,129,.15)',t:'#8B949E'};
+}
+
+function renderML(list){
+  document.getElementById('mlist').innerHTML=list.map(function(s){
+    return '<div class="mi" data-id="'+s.id+'" onclick="focusMk('+s.id+')">'+
+      '<div class="mi-n">'+esc(s.name)+' '+bdg(s.icp)+'</div>'+
+      '<div class="mi-m">'+esc(s.address||'–')+'<br>'+esc(s.phone||'–')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function focusMk(id){
+  var st=S.find(function(s){return s.id===id;}); var c=st&&geoC[st.address];
+  if(c&&kakaoMap){ var pos=new kakao.maps.LatLng(c.lat,c.lng); kakaoMap.setCenter(pos); kakaoMap.setLevel(4); if(st) openOl(st,pos); }
+  hilML(id); openP(id);
+}
+function hilML(id){
+  document.querySelectorAll('.mi').forEach(function(e){e.classList.remove('on')});
+  var el=document.querySelector('.mi[data-id="'+id+'"]');
+  if(el){el.classList.add('on');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
+
+// ── 상세 패널 & 수정 ──────────────────────────────────────────
+var COL_MAP={phone:2,address:3,items:4,erp:5,icp:6,source:7,
+  lastContact:8,nextAction:10,nextAct:11,mtgMemo:18,
+  saasSt:19,saasDate:20,saasMemo:21,matchSt:22,matchCnt:23,
+  matchDate:24,matchMemo:25,bizSt:26,bizPartner:27,bizDate:28,bizMemo:29};
+
+function colLetter(n){var s='';while(n>0){s=String.fromCharCode(64+(n%26||26))+s;n=Math.floor((n-1)/26);}return s;}
+
+function openP(id){
+  var s=S.find(function(x){return x.id===id;}); if(!s) return;
+  var e=parseInt(s.elapsed)||0;
+  document.getElementById('pn').textContent=s.name;
+  document.getElementById('pm').innerHTML=bdg(s.icp)+' '+esc(s.phone||'')+'&nbsp;·&nbsp;경과 '+e+'일 · 미팅 '+(s.mtgCount||0)+'회';
+
+  // 수정 폼 렌더 - 이벤트 핸들러를 data 속성으로 처리
+  document.getElementById('pbody').innerHTML=
+    '<div class="ps"><div class="pst">기본 정보</div>'+
+      pr('연락처',s.phone)+pr('주소',s.address)+pr('취급품목',s.items)+pr('ERP',s.erp||'없음')+pr('리드소스',s.source)+
+    '</div>'+
+    '<div class="ps"><div class="pst">액션 현황</div>'+
+      ei('최근진행일','date',s.id,'lastContact',s.lastContact)+
+      ei('다음액션일','date',s.id,'nextAction',s.nextAction)+
+      eta('내용',s.id,'nextAct',s.nextAct)+
+    '</div>'+
+    (s.mtgMemo||s.mtg1?
+      '<div class="ps"><div class="pst">미팅 ('+s.mtgCount+'회)</div>'+
+        (s.mtg1?pr('최초미팅',s.mtg1):'')+
+        eta('메모',s.id,'mtgMemo',s.mtgMemo)+
+      '</div>':'')+
+    '<div class="ps"><div class="pst">비즈니스 현황</div>'+
+      ebc(s.id,'🔵 주문톡 SaaS','saasSt',s.saasSt,
+        ['미진행','검토중','데모완료','제안중','계약완료','이탈','재활성화'],
+        'saasDate',s.saasDate,'saasMemo',s.saasMemo,'')+
+      ebc(s.id,'🟢 매칭서비스','matchSt',s.matchSt,
+        ['미진행','매칭중','매칭완료','이탈'],
+        'matchDate',s.matchDate,'matchMemo',s.matchMemo,
+        s.matchCnt?'연결매장 '+s.matchCnt+'개':'')+
+      ebc(s.id,'🟣 B2B 중개','bizSt',s.bizSt,
+        ['미진행','중개중','거래성사','이탈'],
+        'bizDate',s.bizDate,'bizMemo',s.bizMemo,
+        s.bizPartner?'중도매인: '+s.bizPartner:'')+
+    '</div>';
+
+  // 이벤트 위임으로 change 이벤트 처리
+  document.getElementById('pbody').addEventListener('change', function(ev){
+    var t=ev.target;
+    var id2=parseInt(t.getAttribute('data-id'));
+    var key=t.getAttribute('data-key');
+    if(isNaN(id2)||!key) return;
+    updField(id2, key, t.value);
+  });
+
+  document.getElementById('panel').classList.add('on');
+  var lb=document.getElementById('login-btn');
+  if(lb) lb.style.display=_writeToken?'none':'inline-block';
+}
+
+// 입력 요소 생성 (data 속성 사용 → 따옴표 이슈 없음)
+function ei(label, type, id, key, val){
+  return '<div class="pr"><div class="prl">'+label+'</div><div class="prv">'+
+    '<input class="edit-input" type="'+type+'" value="'+esc(val||'')+'" '+
+    'data-id="'+id+'" data-key="'+key+'">'+
+  '</div></div>';
+}
+function eta(label, id, key, val){
+  return '<div class="pr" style="align-items:flex-start">'+
+    '<div class="prl" style="padding-top:5px">'+label+'</div>'+
+    '<div class="prv"><textarea class="edit-input" data-id="'+id+'" data-key="'+key+'">'+esc(val||'')+'</textarea></div>'+
+  '</div>';
+}
+function ebc(id, title, sk, sv, opts, dk, dv, mk, mv, sub){
+  var sel='<select class="edit-select" data-id="'+id+'" data-key="'+sk+'">'+
+    opts.map(function(v){return'<option'+(v===sv?' selected':'')+'>'+v+'</option>';}).join('')+
+  '</select>';
+  return '<div class="bc">'+
+    '<div class="bch"><span class="bct">'+title+'</span>'+sel+'</div>'+
+    (sub?'<div style="font-size:10px;color:var(--text3);margin-bottom:4px">'+sub+'</div>':'')+
+    ei('진행일','date',id,dk,dv)+
+    eta('메모',id,mk,mv)+
+  '</div>';
+}
+
+function pr(l,v){
+  return '<div class="pr"><div class="prl">'+l+'</div><div class="prv">'+esc(v||'–')+'</div></div>';
+}
+
+function updField(id, key, value){
+  var store=S.find(function(s){return s.id===id;});
+  if(store) store[key]=value;
+  var col=COL_MAP[key]; if(!col) return;
+  function doSave(){
+    var row=id+6;
+    var cell=SHEET_NAME+'!'+colLetter(col)+row;
+    fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
+      '/values/'+encodeURIComponent(cell)+'?valueInputOption=USER_ENTERED',{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+_writeToken,'Content-Type':'application/json'},
+      body:JSON.stringify({range:cell,majorDimension:'ROWS',values:[[value]]})
+    }).then(function(r){
+      if(r.status===401){_writeToken=null;sessionStorage.removeItem('write_token');requestWriteAuth(doSave);return;}
+      if(!r.ok){showSS('⚠️ 저장 실패',true);return;}
+      showSS('✅ 저장됨');
+    }).catch(function(e){showSS('⚠️ '+e.message,true);});
+  }
+  requestWriteAuth(doSave);
+}
+
+function closeP(){ document.getElementById('panel').classList.remove('on'); }
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#panel')&&!e.target.closest('tr')&&
+     !e.target.closest('.card')&&!e.target.closest('.mi')&&
+     !e.target.closest('.km')&&!e.target.closest('.kinfo')) closeP();
+});
+
+// ── KPI ───────────────────────────────────────────────────────
+function updateKPI(){
+  var today=new Date(); today.setHours(0,0,0,0);
+  var n=S.length,a=0,act=0,saas=0,match=0,biz=0;
+  S.forEach(function(s){
+    if(s.icp==='A등급')a++;
+    if(s.saasSt==='계약완료')saas++;
+    if(s.matchSt==='매칭완료')match++;
+    if(s.bizSt==='거래성사')biz++;
+    if(s.nextAction&&new Date(s.nextAction)<=today)act++;
+  });
+  document.getElementById('k0').textContent=n.toLocaleString();
+  document.getElementById('k1').textContent=a.toLocaleString();
+  document.getElementById('k2').textContent=act.toLocaleString();
+  document.getElementById('k3').textContent=saas.toLocaleString();
+  document.getElementById('k4').textContent=match.toLocaleString();
+  document.getElementById('k5').textContent=biz.toLocaleString();
+}
+
+// ── 유틸 ──────────────────────────────────────────────────────
+function bdg(v){
+  if(!v||v==='미진행'||v==='') return '';
+  return '<span class="b b'+v.replace(/\s/g,'')+'">'+v+'</span>';
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function setProg(p){ document.getElementById('prog').style.width=p+'%'; }
+function db(fn){ clearTimeout(_dbt); _dbt=setTimeout(fn,250); }
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>[B2B] 유통사 리드 관리</title>
+<script type="text/javascript"
+  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=88402647bd084816fc02a3e0d5a63f45&libraries=services"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#21262D;
+  --border:#30363D;--text:#E6EDF3;--text2:#8B949E;--text3:#6E7681;
+  --accent:#1F6FEB;--saas:#388BFD;--match:#3FB950;--biz:#A371F7;
+  --red:#F85149;--amber:#D29922;--green:#3FB950;
+  --radius:10px;--radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;
   background:var(--bg);color:var(--text);font-size:14px}
 .app{display:flex;flex-direction:column;height:100vh}
