@@ -641,15 +641,6 @@ function openP(id){
         s.bizPartner?'중도매인: '+s.bizPartner:'')+
     '</div>';
 
-  // 이벤트 위임으로 change 이벤트 처리
-  document.getElementById('pbody').addEventListener('change', function(ev){
-    var t=ev.target;
-    var id2=parseInt(t.getAttribute('data-id'));
-    var key=t.getAttribute('data-key');
-    if(isNaN(id2)||!key) return;
-    updField(id2, key, t.value);
-  });
-
   document.getElementById('panel').classList.add('on');
   document.querySelector('.app').classList.add('panel-open');
   var lb=document.getElementById('login-btn');
@@ -715,6 +706,25 @@ document.addEventListener('click',function(e){
      !e.target.closest('.card')&&!e.target.closest('.mi')&&
      !e.target.closest('.km')&&!e.target.closest('.kinfo')) closeP();
 });
+
+// 패널 이벤트 위임 — 한 번만 등록 (change + input 모두 감지)
+(function(){
+  var pbody = document.getElementById('pbody');
+  function handleEdit(ev){
+    var t = ev.target;
+    if(!t.hasAttribute('data-id')||!t.hasAttribute('data-key')) return;
+    var id2 = parseInt(t.getAttribute('data-id'));
+    var key  = t.getAttribute('data-key');
+    if(isNaN(id2)||!key) return;
+    updField(id2, key, t.value);
+  }
+  // change: select, textarea
+  // blur: date input (change가 안 잡히는 경우 대비)
+  pbody.addEventListener('change', handleEdit);
+  pbody.addEventListener('blur', function(ev){
+    if(ev.target.type==='date'||ev.target.tagName==='TEXTAREA') handleEdit(ev);
+  }, true);
+})();
 
 // ── KPI ───────────────────────────────────────────────────────
 function updateKPI(){
