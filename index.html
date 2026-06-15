@@ -121,9 +121,16 @@ tbody tr:hover{background:var(--bg2)}
 .bc{background:var(--bg3);border-radius:5px;padding:9px 11px;margin-bottom:6px}
 .bch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .bct{font-size:11px;font-weight:600}
-.edit-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:5px 8px;font-size:11px;font-family:inherit;outline:none}
+.edit-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:5px 8px;font-size:11px;font-family:inherit;outline:none;color-scheme:dark}
 .edit-input:focus{border-color:var(--accent)}
 textarea.edit-input{min-height:56px;resize:vertical}
+/* 날짜 input 캘린더 아이콘 밝게 */
+input[type="date"].edit-input::-webkit-calendar-picker-indicator{
+  filter:invert(1) opacity(.6);cursor:pointer;
+}
+input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover{
+  filter:invert(1) opacity(1);
+}
 .edit-select{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:3px 7px;font-size:11px;font-family:inherit;outline:none;cursor:pointer}
 .edit-select:focus{border-color:var(--accent)}
 .save-bar{font-size:10px;margin-top:4px;transition:opacity .5s;opacity:0}
