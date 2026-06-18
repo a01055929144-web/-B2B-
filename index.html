@@ -15,6 +15,12 @@
   --red:#F85149;--amber:#D29922;--green:#3FB950;
   --radius:10px;--radius-sm:6px;
 }
+body[data-theme="light"]{
+  --bg:#F6F8FA;--bg2:#FFFFFF;--bg3:#EEF2F6;
+  --border:#D0D7DE;--text:#24292F;--text2:#57606A;--text3:#6E7781;
+  --accent:#0969DA;--saas:#0969DA;--match:#1A7F37;--biz:#8250DF;
+  --red:#CF222E;--amber:#9A6700;--green:#1A7F37;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
 .app{display:flex;flex-direction:column;height:100vh}
@@ -28,6 +34,8 @@ html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;backgrou
 .header-status{font-size:11px;color:var(--text3)}
 .header-link{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s}
 .header-link:hover{border-color:var(--accent);color:#fff}
+.theme-toggle{height:30px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
+.theme-toggle:hover{border-color:var(--accent);color:#fff}
 .header-refresh{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
 .main{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .view{display:none;flex:1;overflow:hidden}
@@ -150,6 +158,7 @@ input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover{
   .header-right{margin-left:auto}
   .header-status{display:none}
   .header-link{height:28px;padding:0 8px;font-size:11px}
+  .theme-toggle{height:28px;padding:0 8px;font-size:11px}
   .map-side{display:none}.panel{width:100%}
   td:nth-child(4),th:nth-child(4),td:nth-child(5),th:nth-child(5){display:none}
 }
@@ -168,6 +177,7 @@ input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover{
   <div class="header-right">
     <a class="header-link" href="https://script.google.com/macros/s/AKfycbzH5ERI_xY_lMpI14Ch-CtkHNW-_5fzyA3Bo-NzO4CsWQTfnjaCfvN3mPT85fvA2FmTUw/exec" target="_blank" rel="noopener">서비스 수수료</a>
     <a class="header-link" href="https://docs.google.com/spreadsheets/d/1IMfCKDXB-Le-m10TaDr-a6akRfAhAnoTes53_MTu9JY/edit?gid=835509730#gid=835509730" target="_blank" rel="noopener">Google Sheet</a>
+    <button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-pressed="false" title="라이트/다크 전환">다크</button>
     <span class="header-status" id="hst">로딩 중...</span>
     <button class="header-refresh" onclick="loadAll()" title="새로고침">↻</button>
   </div>
@@ -302,7 +312,25 @@ var _dbt=null, _tokenClient=null, _writeToken=null, _pendingSave=null;
 try{ geoC=JSON.parse(localStorage.getItem('crmGeoKakao')||'{}'); }catch(e){}
 _writeToken = sessionStorage.getItem('write_token')||null;
 
-window.onload = function(){ loadAll(); initWriteAuth(); };
+applyTheme(localStorage.getItem('crmTheme')||'dark');
+window.onload = function(){ applyTheme(localStorage.getItem('crmTheme')||'dark'); loadAll(); initWriteAuth(); };
+
+function applyTheme(theme){
+  var next = theme === 'light' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', next);
+  var btn = document.getElementById('themeToggle');
+  if(btn){
+    btn.textContent = next === 'light' ? '라이트' : '다크';
+    btn.setAttribute('aria-pressed', next === 'light' ? 'true' : 'false');
+  }
+}
+
+function toggleTheme(){
+  var current = document.body.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  var next = current === 'light' ? 'dark' : 'light';
+  localStorage.setItem('crmTheme', next);
+  applyTheme(next);
+}
 
 // ── OAuth 초기화 ───────────────────────────────────────────────
 function initWriteAuth(){
