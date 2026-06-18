@@ -42,7 +42,9 @@ html,body{height:100%;font-family:'Pretendard',-apple-system,sans-serif;backgrou
 .view.active{display:flex;flex-direction:column}
 .kpi-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:0;flex-shrink:0;overflow-x:auto}
 .kpi-bar::-webkit-scrollbar{display:none}
-.kpi{display:flex;flex-direction:column;gap:1px;padding:0 14px;flex-shrink:0}
+.kpi{display:flex;flex-direction:column;gap:1px;padding:0 14px;flex-shrink:0;border:1px solid transparent;border-radius:var(--radius-sm);background:transparent;color:inherit;font-family:inherit;text-align:left;cursor:pointer}
+.kpi:hover{background:var(--bg3);border-color:var(--border)}
+.kpi.active{background:rgba(31,111,235,.12);border-color:var(--accent)}
 .kpi-label{font-size:10px;color:var(--text3);letter-spacing:.3px}
 .kpi-value{font-size:20px;font-weight:700;letter-spacing:-.5px}
 .kpi-sep{width:1px;height:28px;background:var(--border);align-self:center;flex-shrink:0}
@@ -184,17 +186,17 @@ input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover{
 </header>
 
 <div class="kpi-bar">
-  <div class="kpi"><div class="kpi-label">전체</div><div class="kpi-value" id="k0">–</div></div>
+  <button class="kpi active" type="button" data-kpi="all" onclick="setKpiFilter('all')" title="전체 보기"><div class="kpi-label">전체</div><div class="kpi-value" id="k0">–</div></button>
   <div class="kpi-sep"></div>
-  <div class="kpi"><div class="kpi-label">A등급</div><div class="kpi-value" style="color:var(--green)" id="k1">–</div></div>
+  <button class="kpi" type="button" data-kpi="a" onclick="setKpiFilter('a')" title="A등급만 보기"><div class="kpi-label">A등급</div><div class="kpi-value" style="color:var(--green)" id="k1">–</div></button>
   <div class="kpi-sep"></div>
-  <div class="kpi"><div class="kpi-label">액션필요</div><div class="kpi-value" style="color:var(--red)" id="k2">–</div></div>
+  <button class="kpi" type="button" data-kpi="action" onclick="setKpiFilter('action')" title="액션필요만 보기"><div class="kpi-label">액션필요</div><div class="kpi-value" style="color:var(--red)" id="k2">–</div></button>
   <div class="kpi-sep"></div>
-  <div class="kpi"><div class="kpi-label">주문톡계약</div><div class="kpi-value" style="color:var(--saas)" id="k3">–</div></div>
+  <button class="kpi" type="button" data-kpi="saas" onclick="setKpiFilter('saas')" title="주문톡 계약만 보기"><div class="kpi-label">주문톡계약</div><div class="kpi-value" style="color:var(--saas)" id="k3">–</div></button>
   <div class="kpi-sep"></div>
-  <div class="kpi"><div class="kpi-label">매칭완료</div><div class="kpi-value" style="color:var(--green)" id="k4">–</div></div>
+  <button class="kpi" type="button" data-kpi="match" onclick="setKpiFilter('match')" title="매칭완료만 보기"><div class="kpi-label">매칭완료</div><div class="kpi-value" style="color:var(--green)" id="k4">–</div></button>
   <div class="kpi-sep"></div>
-  <div class="kpi"><div class="kpi-label">거래성사</div><div class="kpi-value" style="color:var(--biz)" id="k5">–</div></div>
+  <button class="kpi" type="button" data-kpi="biz" onclick="setKpiFilter('biz')" title="거래성사만 보기"><div class="kpi-label">거래성사</div><div class="kpi-value" style="color:var(--biz)" id="k5">–</div></button>
 </div>
 <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
 
@@ -304,7 +306,7 @@ var WRITE_SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
 var S=[], TD=[], fList=[];
 var kakaoMap=null, kakaoOl=null, kakaoMk={};
 var geoC={};
-var mapInited=false, currentView='today';
+var mapInited=false, currentView='today', activeKpi='all';
 var sortKey='elapsed', sortDir=-1;
 var ROW_H=42, BUFFER=8;
 var _dbt=null, _tokenClient=null, _writeToken=null, _pendingSave=null;
@@ -434,10 +436,64 @@ function sw(v){
   if(v==='map'){ if(!mapInited){initKMap();mapInited=true;} else fmap(); }
 }
 
+function isActionNeeded(s){
+  if(!s.nextAction) return false;
+  var today=new Date(); today.setHours(0,0,0,0);
+  var d=new Date(s.nextAction); d.setHours(0,0,0,0);
+  return d<=today;
+}
+
+function matchesKpi(s){
+  if(activeKpi==='a') return s.icp==='A등급';
+  if(activeKpi==='action') return isActionNeeded(s);
+  if(activeKpi==='saas') return s.saasSt==='계약완료';
+  if(activeKpi==='match') return s.matchSt==='매칭완료';
+  if(activeKpi==='biz') return s.bizSt==='거래성사';
+  return true;
+}
+
+function setSelectValue(id,value){
+  var el=document.getElementById(id);
+  if(el) el.value=value;
+}
+
+function setInputValue(id,value){
+  var el=document.getElementById(id);
+  if(el) el.value=value;
+}
+
+function syncKpiControls(){
+  setInputValue('q-today',''); setInputValue('q-list',''); setInputValue('q-map','');
+  setSelectValue('f-icp',''); setSelectValue('f-saas',''); setSelectValue('f-match',''); setSelectValue('f-biz','');
+  setSelectValue('f-map-icp','');
+  if(activeKpi==='all'){
+    return;
+  }
+  if(activeKpi==='a'){ setSelectValue('f-icp','A등급'); setSelectValue('f-map-icp','A등급'); }
+  if(activeKpi==='saas') setSelectValue('f-saas','계약완료');
+  if(activeKpi==='match') setSelectValue('f-match','매칭완료');
+  if(activeKpi==='biz') setSelectValue('f-biz','거래성사');
+}
+
+function updateKpiActive(){
+  document.querySelectorAll('.kpi[data-kpi]').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-kpi')===activeKpi);
+  });
+}
+
+function setKpiFilter(key){
+  activeKpi=key||'all';
+  syncKpiControls();
+  updateKpiActive();
+  renderToday();
+  renderList();
+  if(mapInited) fmap();
+}
+
 // ── 오늘 할 일 ────────────────────────────────────────────────
 function renderToday(){
   var q=(document.getElementById('q-today')||{}).value||''; q=q.toLowerCase();
-  var list=TD.filter(function(s){return !q||s.name.toLowerCase().includes(q);});
+  var list=TD.filter(function(s){return matchesKpi(s)&&(!q||s.name.toLowerCase().includes(q));});
   document.getElementById('c-today').textContent=list.length+'개';
   var el=document.getElementById('cards');
   if(!list.length){
@@ -477,6 +533,7 @@ function renderList(){
   var match=(document.getElementById('f-match')||{}).value||'';
   var biz=(document.getElementById('f-biz')||{}).value||'';
   fList=S.filter(function(s){
+    if(!matchesKpi(s)) return false;
     if(icp&&s.icp!==icp) return false;
     if(saas&&s.saasSt!==saas) return false;
     if(match&&s.matchSt!==match) return false;
@@ -539,6 +596,7 @@ function fmap(){
   var icp=(document.getElementById('f-map-icp')||{}).value||'';
   var exitF=(document.getElementById('f-map-exit')||{}).value;
   var filtered=S.filter(function(s){
+    if(!matchesKpi(s)) return false;
     if(!s.address) return false;
     if(icp&&s.icp!==icp) return false;
     if(q&&!s.name.toLowerCase().includes(q)&&!s.address.toLowerCase().includes(q)) return false;
@@ -781,7 +839,7 @@ function updateKPI(){
     if(s.saasSt==='계약완료')saas++;
     if(s.matchSt==='매칭완료')match++;
     if(s.bizSt==='거래성사')biz++;
-    if(s.nextAction&&new Date(s.nextAction)<=today)act++;
+    if(isActionNeeded(s))act++;
   });
   document.getElementById('k0').textContent=n.toLocaleString();
   document.getElementById('k1').textContent=a.toLocaleString();
