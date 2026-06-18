@@ -112,6 +112,10 @@ tbody tr:hover{background:var(--bg2)}
 .kinfo-bs{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
 .kinfo-close{position:absolute;top:6px;right:8px;background:none;border:none;color:#6E7681;font-size:14px;cursor:pointer;padding:2px}
 .kinfo-close:hover{color:#E6EDF3}
+.loc-btn{cursor:pointer}
+.my-loc{position:relative;width:16px;height:16px;border:3px solid #fff;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px rgba(31,111,235,.28),0 2px 10px rgba(0,0,0,.35);transform:translate(-50%,-50%)}
+.my-loc::after{content:'';position:absolute;inset:-12px;border:2px solid rgba(31,111,235,.32);border-radius:50%;animation:pulseLoc 1.8s ease-out infinite}
+@keyframes pulseLoc{0%{transform:scale(.5);opacity:.85}100%{transform:scale(1.6);opacity:0}}
 .panel{position:fixed;right:0;top:52px;bottom:0;width:360px;background:var(--bg2);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .22s ease;z-index:200;display:flex;flex-direction:column}
 .panel.on{transform:translateX(0)}
 /* 패널 열릴 때 메인 콘텐츠 밀어내기 */
@@ -260,6 +264,8 @@ input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover{
         <option value="exclude">이탈 제외</option>
         <option value="">전체 표시</option>
       </select>
+      <button class="fi loc-btn" type="button" onclick="centerMyLocation()" title="현재 위치로 이동">내 위치</button>
+      <span class="geo-st" id="loc-st"></span>
       <span class="fi-count" id="c-map"></span>
     </div>
     <div class="map-wrap">
@@ -305,6 +311,7 @@ var WRITE_SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
 // ── 상태 ──────────────────────────────────────────────────────
 var S=[], TD=[], fList=[];
 var kakaoMap=null, kakaoOl=null, kakaoMk={};
+var userLocOverlay=null, userLocCircle=null, userLocWatchId=null, lastUserPos=null, locationStarted=false;
 var geoC={};
 var mapInited=false, currentView='today', activeKpi='all';
 var sortKey='elapsed', sortDir=-1;
@@ -588,7 +595,86 @@ function initKMap(){
   kakaoMap=new kakao.maps.Map(document.getElementById('kmap'),
     {center:new kakao.maps.LatLng(37.5665,126.9780),level:8});
   kakao.maps.event.addListener(kakaoMap,'click',function(){closeOl();});
+  startLocationWatch();
   fmap();
+}
+
+function setLocStatus(text){
+  var el=document.getElementById('loc-st');
+  if(el) el.textContent=text||'';
+}
+
+function startLocationWatch(){
+  if(locationStarted) return;
+  locationStarted=true;
+  if(!navigator.geolocation){
+    setLocStatus('위치 미지원');
+    return;
+  }
+  setLocStatus('위치 확인 중...');
+  userLocWatchId=navigator.geolocation.watchPosition(updateMyLocation,handleLocationError,{
+    enableHighAccuracy:true,
+    maximumAge:10000,
+    timeout:15000
+  });
+}
+
+function updateMyLocation(pos){
+  if(!kakaoMap||!pos||!pos.coords) return;
+  var lat=pos.coords.latitude, lng=pos.coords.longitude;
+  lastUserPos={lat:lat,lng:lng,accuracy:pos.coords.accuracy||0,ts:Date.now()};
+  var point=new kakao.maps.LatLng(lat,lng);
+  if(!userLocOverlay){
+    var el=document.createElement('div');
+    el.className='my-loc';
+    userLocOverlay=new kakao.maps.CustomOverlay({position:point,content:el,zIndex:30});
+    userLocOverlay.setMap(kakaoMap);
+  } else {
+    userLocOverlay.setPosition(point);
+  }
+  if(kakao.maps.Circle){
+    if(!userLocCircle){
+      userLocCircle=new kakao.maps.Circle({
+        center:point,
+        radius:Math.max(20,lastUserPos.accuracy),
+        strokeWeight:1,
+        strokeColor:'#1F6FEB',
+        strokeOpacity:.45,
+        fillColor:'#1F6FEB',
+        fillOpacity:.08
+      });
+      userLocCircle.setMap(kakaoMap);
+    } else {
+      userLocCircle.setPosition(point);
+      userLocCircle.setRadius(Math.max(20,lastUserPos.accuracy));
+    }
+  }
+  setLocStatus('내 위치 표시중');
+}
+
+function handleLocationError(err){
+  if(userLocWatchId!==null&&navigator.geolocation){
+    navigator.geolocation.clearWatch(userLocWatchId);
+    userLocWatchId=null;
+  }
+  locationStarted=false;
+  var msg='위치 확인 실패';
+  if(err&&err.code===1) msg='위치 권한 필요';
+  if(err&&err.code===2) msg='위치 사용 불가';
+  if(err&&err.code===3) msg='위치 시간 초과';
+  setLocStatus(msg);
+}
+
+function centerMyLocation(){
+  if(!mapInited){ sw('map'); return; }
+  startLocationWatch();
+  if(lastUserPos&&kakaoMap){
+    kakaoMap.setCenter(new kakao.maps.LatLng(lastUserPos.lat,lastUserPos.lng));
+    if(kakaoMap.getLevel&&kakaoMap.getLevel()>5) kakaoMap.setLevel(5);
+    setLocStatus('내 위치로 이동');
+  } else {
+    setLocStatus('위치 확인 중...');
+  }
 }
 
 function fmap(){
