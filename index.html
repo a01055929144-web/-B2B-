@@ -378,7 +378,7 @@ function showSS(msg, isErr){
 function loadAll(){
   document.getElementById('hst').textContent='로딩 중...';
   setProg(10);
-  var range=encodeURIComponent(SHEET_NAME+'!A6:AC3500');
+  var range=encodeURIComponent(SHEET_NAME+'!A6:AC');
   var url='https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+
     '/values/'+range+'?key='+API_KEY+'&valueRenderOption=FORMATTED_VALUE';
   fetch(url)
